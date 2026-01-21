@@ -172,6 +172,59 @@ const RegistrationForm = () => {
     setIsSubmitted(true);
   };
 
+  const registrationOpenDate = new Date("2026-01-25T00:00:00+05:30");
+  const isRegistrationOpen = new Date() >= registrationOpenDate;
+
+  if (!isRegistrationOpen) {
+    return (
+      <section id="register" className="section-padding" ref={ref}>
+        <div className="registration-container-custom max-w-3xl">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            className="text-center"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-4">
+              <Sparkles className="w-4 h-4" />
+              <span className="text-sm font-medium">Registration</span>
+            </div>
+            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+              Join <span className="gradient-text">Iconcoderz-2k26</span>
+            </h2>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ delay: 0.2 }}
+            className="glass-card rounded-3xl p-8 sm:p-12 text-center mt-8"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={isInView ? { scale: 1 } : {}}
+              transition={{ delay: 0.4, type: "spring" }}
+              className="w-20 h-20 rounded-full gradient-bg flex items-center justify-center mx-auto mb-6"
+            >
+              <Sparkles className="text-white w-10 h-10" />
+            </motion.div>
+            
+            <h3 className="font-heading text-2xl sm:text-3xl font-bold mb-4">
+              Opens Soon!
+            </h3>
+            
+            <p className="text-lg text-muted-foreground mb-6">
+              Registrations will be opened on <span className="text-primary font-semibold">25th January 2026</span>
+            </p>
+            
+            <div className="bg-muted rounded-xl p-4 inline-block">
+              <p className="text-sm text-muted-foreground">Stay tuned for updates!</p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
+
   if (isSubmitted) {
     return (
       <section id="register" className="section-padding">
@@ -193,7 +246,7 @@ const RegistrationForm = () => {
               Registration Successful! 🎉
             </h2>
             <p className="text-muted-foreground mb-6">
-              Thank you for registering for iconcoderz-2k26. We'll verify your payment
+              Thank you for registering for Iconcoderz-2k26. We'll verify your payment
               and send a confirmation email within 24 hours.
             </p>
             <div className="bg-muted rounded-xl p-4 mb-6">
@@ -221,7 +274,7 @@ const RegistrationForm = () => {
             <span className="text-sm font-medium">Registration</span>
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
-            Join <span className="gradient-text">iconcoderz-2k26</span>
+            Join <span className="gradient-text">Iconcoderz-2k26</span>
           </h2>
         </motion.div>
 

@@ -74,7 +74,7 @@ const AboutSection = () => {
             </h2>
 
             <p className="text-lg sm:text-lg md:text-xl text-muted-foreground leading-relaxed">
-              <span className="font-semibold text-foreground">iconcoderz-2k26</span> is a 
+              <span className="font-semibold text-foreground">Iconcoderz-2k26</span> is a 
               single-round, online competitive programming contest exclusively for SRKR 
               Engineering College students. Whether you're a 1st, 2nd, or 3rd year student, 
               this is your chance to test your Data Structures and Algorithms skills against 

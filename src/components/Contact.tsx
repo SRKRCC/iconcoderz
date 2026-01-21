@@ -31,10 +31,10 @@ const contactInfo = [
 ];
 
 const socialLinks = [
-  { icon: Instagram, href: "#", label: "Instagram" },
-  { icon: Github, href: "#", label: "GitHub" },
-  { icon: Linkedin, href: "#", label: "LinkedIn" },
-  { icon: MessageCircle, href: "#", label: "WhatsApp" },
+  { icon: Instagram, href: "https://instagram.com/srkr_coding_club", label: "Instagram" },
+  { icon: Github, href: "https://github.com/Srkr-Coding-Club", label: "GitHub" },
+  { icon: Linkedin, href: "https://linkedin.com/company/srkr-coding-club", label: "LinkedIn" },
+  // { icon: MessageCircle, href: "https://chat.whatsapp.com/srkrcodingclub", label: "WhatsApp" },
 ];
 
 const ContactSection = () => {

@@ -5,7 +5,7 @@ const sections = [
   {
     title: "Introduction",
     content: [
-      "IconCoderz 2K26 is a coding competition organized to promote problem-solving, innovation, and technical excellence.",
+      "Iconcoderz 2K26 is a coding competition organized to promote problem-solving, innovation, and technical excellence.",
       "This Privacy Policy explains how we collect, use, and protect participant information during registration and event participation.",
     ],
   },
@@ -22,7 +22,7 @@ const sections = [
     content: [
       "To manage event registrations and participant verification.",
       "To communicate important announcements, schedules, and results.",
-      "To improve the quality of future IconCoderz events.",
+      "To improve the quality of future Iconcoderz events.",
     ],
   },
   {
@@ -94,7 +94,7 @@ const PrivacyPolicy = () => {
             Privacy Policy
           </h1>
           <p className="text-muted-foreground text-lg">
-            IconCoderz 2K26 — Coding Competition
+            Iconcoderz 2K26 — Coding Competition
           </p>
         </div>
 
@@ -127,7 +127,7 @@ const PrivacyPolicy = () => {
         {/* Footer Note */}
         <div className="text-center mt-16 text-sm text-muted-foreground">
           <p>
-            © {new Date().getFullYear()} IconCoderz 2K26. All rights reserved.
+            © {new Date().getFullYear()} Iconcoderz 2K26. All rights reserved.
           </p>
         </div>
 

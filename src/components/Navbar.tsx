@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Moon, Sun, Code2 } from "lucide-react";
+import { Menu, X, Code2 } from "lucide-react";
 import ThemeToggle from "../context/ThemeToggle";
 
 const navLinks = [
@@ -15,7 +15,9 @@ const navLinks = [
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDark, setIsDark] = useState(false);
+
+  const registrationOpenDate = new Date("2026-01-25T00:00:00+05:30");
+  const isRegistrationOpen = new Date() >= registrationOpenDate;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,19 +26,6 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  useEffect(() => {
-    const isDarkMode = localStorage.getItem("theme") === "dark" ||
-      (!localStorage.getItem("theme") && window.matchMedia("(prefers-color-scheme: dark)").matches);
-    setIsDark(isDarkMode);
-    document.documentElement.classList.toggle("dark", isDarkMode);
-  }, []);
-
-   const toggleTheme = () => {
-    setIsDark(!isDark);
-    document.documentElement.classList.toggle("dark");
-    localStorage.setItem("theme", isDark ? "light" : "dark");
-  };
 
   const scrollToSection = (href: string) => {
     const element = document.querySelector(href);
@@ -70,7 +59,7 @@ const Navbar = () => {
               <Code2 className="w-6 h-6 text-white" />
             </div>
             <span className="font-heading font-bold text-xl hidden sm:block">
-              <span className="gradient-text">iconcoderz</span>
+              <span className="gradient-text">Iconcoderz</span>
               <span className="text-muted-foreground">-2k26</span>
             </span>
           </a>
@@ -97,16 +86,22 @@ const Navbar = () => {
           <div className="flex items-center gap-3">
             <ThemeToggle />
 
-            <a
-              href="#register"
-              onClick={(e) => {
-                e.preventDefault();
-                scrollToSection("#register");
-              }}
-              className="hidden md:block btn-hero-primary !py-2 !px-5 !text-sm"
-            >
-              Register Now
-            </a>
+            {isRegistrationOpen ? (
+              <a
+                href="#register"
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToSection("#register");
+                }}
+                className="hidden md:block btn-hero-primary !py-2 !px-5 !text-sm"
+              >
+                Register Now
+              </a>
+            ) : (
+              <span className="hidden md:block px-4 py-2 text-sm font-medium text-muted-foreground glass-card rounded-full">
+                Registrations open 25th Jan
+              </span>
+            )}
 
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -150,19 +145,30 @@ const Navbar = () => {
                   {link.name}
                 </motion.a>
               ))}
-              <motion.a
-                href="#register"
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToSection("#register");
-                }}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: navLinks.length * 0.05 }}
-                className="mt-2 btn-hero-primary text-center"
-              >
-                Register Now
-              </motion.a>
+              {isRegistrationOpen ? (
+                <motion.a
+                  href="#register"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection("#register");
+                  }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: navLinks.length * 0.05 }}
+                  className="mt-2 btn-hero-primary text-center"
+                >
+                  Register Now
+                </motion.a>
+              ) : (
+                <motion.span
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: navLinks.length * 0.05 }}
+                  className="mt-2 px-4 py-3 text-center text-muted-foreground glass-card rounded-lg"
+                >
+                  Registrations open 25th Jan
+                </motion.span>
+              )}
             </div>
           </motion.div>
         )}

@@ -1,10 +1,10 @@
-# iconcoderz-2k26
+# Iconcoderz-2k26
 
-![iconcoderz-2k26 Banner](public/banner.webp)
+![Iconcoderz-2k26 Banner](public/banner.webp)
 
 ## Event Details
 
-**Event Name:** iconcoderz-2k26  
+**Event Name:** Iconcoderz-2k26  
 **Tagline:** Decode • Compete • Dominate  
 **Event Date:** 23rd February 2026 (Monday) | 9:00 AM IST  
 **Mode:** Online  
@@ -20,9 +20,9 @@
 <details>
 <summary><strong style="font-size: x-large;">Description</strong></summary>
 
-Welcome to **iconcoderz-2k26**, a premier competitive programming contest organized by SRKR Coding Club! This event is designed to challenge your Data Structures and Algorithms skills and push your problem-solving abilities to the limit.
+Welcome to **Iconcoderz-2k26**, a premier competitive programming contest organized by SRKR Coding Club! This event is designed to challenge your Data Structures and Algorithms skills and push your problem-solving abilities to the limit.
 
-iconcoderz-2k26 is a single-round, online competitive programming contest exclusively for SRKR Engineering College students. Whether you're a coding veteran or just starting your competitive programming journey, this is your chance to test your skills, compete with your peers, and stand out on campus.
+Iconcoderz-2k26 is a single-round, online competitive programming contest exclusively for SRKR Engineering College students. Whether you're a coding veteran or just starting your competitive programming journey, this is your chance to test your skills, compete with your peers, and stand out on campus.
 
 The contest features algorithmic problems of varying difficulty levels, from easy warm-up problems to challenging brain-teasers. Participants will compete individually to solve as many problems as possible within the given time frame.
 
@@ -90,7 +90,7 @@ The jury's decisions are final and binding.
 <details>
 <summary><strong style="font-size: x-large;">Topics Covered</strong></summary>
 
-iconcoderz-2k26 will feature problems from the following DSA topics:
+Iconcoderz-2k26 will feature problems from the following DSA topics:
 
 - Arrays & Strings
 - Linked Lists & Stacks
@@ -109,7 +109,7 @@ iconcoderz-2k26 will feature problems from the following DSA topics:
 
 ```mermaid
 timeline
-    title iconcoderz-2k26 Timeline
+    title Iconcoderz-2k26 Timeline
     section Registration
         Open Now : Registration Opens
         Feb 22 : Registration Deadline
@@ -136,13 +136,13 @@ timeline
 ## FAQs
 
 <details>
-<summary>Who can participate in iconcoderz-2k26?</summary>
+<summary>Who can participate in Iconcoderz-2k26?</summary>
 Only 1st, 2nd, and 3rd year students of SRKR Engineering College are eligible.
 </details>
 
 <details>
 <summary>Is team participation allowed?</summary>
-No, iconcoderz-2k26 is an individual competition only.
+No, Iconcoderz-2k26 is an individual competition only.
 </details>
 
 <details>

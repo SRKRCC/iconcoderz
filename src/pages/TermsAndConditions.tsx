@@ -13,7 +13,7 @@ const terms = [
   {
     title: "Registration",
     content: [
-      "Registration is mandatory to participate in IconCoderz 2K26.",
+      "Registration is mandatory to participate in Iconcoderz 2K26.",
       "Once registered, details cannot be changed after the deadline.",
     ],
   },
@@ -104,7 +104,7 @@ const TermsAndConditions = () => {
 
         {/* Footer */}
         <div className="text-center mt-16 text-sm text-muted-foreground">
-          © {new Date().getFullYear()} IconCoderz 2K26. All rights reserved.
+          © {new Date().getFullYear()} Iconcoderz 2K26. All rights reserved.
         </div>
       </div>
     </section>

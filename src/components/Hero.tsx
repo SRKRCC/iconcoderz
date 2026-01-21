@@ -115,6 +115,9 @@ const CountdownTimer = () => {
 };
 
 const HeroSection = () => {
+  const registrationOpenDate = new Date("2026-01-25T00:00:00+05:30");
+  const isRegistrationOpen = new Date() >= registrationOpenDate;
+
   const scrollToSection = (href: string) => {
     const element = document.querySelector(href);
     if (element) {
@@ -160,7 +163,7 @@ const HeroSection = () => {
           transition={{ duration: 0.6 }}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-8"
         >
-          <Sparkles className="w-4 h-4 text-primary" />
+          {/* <Sparkles className="w-4 h-4 text-primary" /> */}
           <span className="text-sm font-medium">SRKR Coding Club Presents</span>
         </motion.div>
 
@@ -171,7 +174,7 @@ const HeroSection = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6"
         >
-          <span className="gradient-text">iconcoderz</span>
+          <span className="gradient-text">Iconcoderz</span>
           <span className="text-muted-foreground">-2k26</span>
         </motion.h1>
 
@@ -216,12 +219,18 @@ const HeroSection = () => {
           transition={{ duration: 0.6, delay: 0.8 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
-          <button
-            onClick={() => scrollToSection("#register")}
-            className="btn-hero-primary animate-pulse-glow w-full sm:w-auto"
-          >
-            Register Now
-          </button>
+          {isRegistrationOpen ? (
+            <button
+              onClick={() => scrollToSection("#register")}
+              className="btn-hero-primary animate-pulse-glow w-full sm:w-auto"
+            >
+              Register Now
+            </button>
+          ) : (
+            <span className="px-8 py-4 rounded-full glass-card text-lg font-medium text-muted-foreground">
+              Registrations open 25th Jan
+            </span>
+          )}
           <button
             onClick={() => scrollToSection("#about")}
             className="btn-hero-secondary w-full sm:w-auto"

@@ -72,7 +72,7 @@ const AdminLogin = () => {
 
         {/* Footer */}
         <p className="text-xs text-muted-foreground text-center mt-6">
-          © {new Date().getFullYear()} IconCoderz Admin Panel
+          © {new Date().getFullYear()} Iconcoderz Admin Panel
         </p>
       </div>
     </div>

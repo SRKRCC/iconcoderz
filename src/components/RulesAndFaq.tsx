@@ -13,7 +13,7 @@ const rules = [
     id: "rule-2",
     question: "Is team participation allowed?",
     answer:
-      "No, iconcoderz-2k26 is an individual competition. Each participant must compete solo to showcase their personal coding skills.",
+      "No, Iconcoderz-2k26 is an individual competition. Each participant must compete solo to showcase their personal coding skills.",
   },
   {
     id: "rule-3",
