@@ -84,7 +84,7 @@ const Navbar = () => {
                   e.preventDefault();
                   scrollToSection(link.href);
                 }}
-                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative group"
+                className="px-4 py-2 text-md font-medium text-muted-foreground hover:text-foreground transition-colors relative group"
               >
                 {link.name}
                 <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary group-hover:w-3/4 transition-all duration-300" />

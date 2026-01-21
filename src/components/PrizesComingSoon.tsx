@@ -8,7 +8,7 @@ const PrizesSection = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="prizes" className="section-padding bg-muted/30" ref={ref}>
+    <section id="prizes" className="section-padding bg-muted" ref={ref}>
       <div className="container-custom">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
