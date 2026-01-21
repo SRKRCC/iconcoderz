@@ -94,8 +94,8 @@ const RegistrationForm = () => {
         if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
         if (!formData.registrationNumber.trim()) {
           newErrors.registrationNumber = "Registration number is required";
-        } else if (!/^\d{12}$/.test(formData.registrationNumber)) {
-          newErrors.registrationNumber = "Must be 12 digits";
+        } else if (!/^\d{10}$/.test(formData.registrationNumber)) {
+          newErrors.registrationNumber = "Must be 10 digits";
         }
         if (!formData.email.trim()) {
           newErrors.email = "Email is required";

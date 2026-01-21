@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Moon, Sun, Code2 } from "lucide-react";
+import ThemeToggle from "../context/ThemeToggle";
 
 const navLinks = [
   { name: "Home", href: "#home" },
@@ -31,7 +32,7 @@ const Navbar = () => {
     document.documentElement.classList.toggle("dark", isDarkMode);
   }, []);
 
-  const toggleTheme = () => {
+   const toggleTheme = () => {
     setIsDark(!isDark);
     document.documentElement.classList.toggle("dark");
     localStorage.setItem("theme", isDark ? "light" : "dark");
@@ -94,17 +95,7 @@ const Navbar = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg hover:bg-muted transition-colors"
-              aria-label="Toggle theme"
-            >
-              {isDark ? (
-                <Sun className="w-5 h-5 text-primary" />
-              ) : (
-                <Moon className="w-5 h-5 text-muted-foreground" />
-              )}
-            </button>
+            <ThemeToggle />
 
             <a
               href="#register"
