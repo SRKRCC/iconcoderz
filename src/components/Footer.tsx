@@ -106,14 +106,32 @@ const Footer = () => {
         </div>
 
         {/* Divider */}
+        {/* Divider */}
         <div className="border-t border-background/10 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-background/60 text-sm text-center md:text-left">
               © 2026 SRKR Coding Club. All rights reserved.
             </p>
             
+            {/* Privacy & Terms */}
+            <div className="flex gap-4 text-sm">
+              <a
+                href="/privacy-policy"
+                className="text-background/60 hover:text-primary transition-colors"
+              >
+                Privacy Policy
+              </a>
+              <span className="text-background/60">|</span>
+              <a
+                href="/terms"
+                className="text-background/60 hover:text-primary transition-colors"
+              >
+                Terms & Conditions
+              </a>
+            </div>
           </div>
         </div>
+
       </div>
     </footer>
   );
