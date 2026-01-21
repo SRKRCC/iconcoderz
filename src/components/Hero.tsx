@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ChevronDown, Sparkles } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 const codeSnippets = [
   "function solve(n) {",

@@ -9,7 +9,6 @@ import {
   Instagram,
   Github,
   Linkedin,
-  MessageCircle,
 } from "lucide-react";
 
 const contactInfo = [
