@@ -1,0 +1,678 @@
+import { useState, useRef } from "react";
+import type { ChangeEvent, FormEvent  } from "react";
+import { motion, AnimatePresence, useInView } from "framer-motion";
+import {
+  User,
+  GraduationCap,
+  Code,
+  CreditCard,
+  CheckCircle,
+  ArrowRight,
+  ArrowLeft,
+  Upload,
+  AlertCircle,
+  Check,
+  Sparkles,
+} from "lucide-react";
+
+interface FormData {
+  fullName: string;
+  registrationNumber: string;
+  email: string;
+  phone: string;
+  yearOfStudy: string;
+  branch: string;
+  gender: string;
+  codechefHandle: string;
+  leetcodeHandle: string;
+  codeforcesHandle: string;
+  transactionId: string;
+  paymentScreenshot: File | null;
+  confirmInfo: boolean;
+}
+
+interface FormErrors {
+  [key: string]: string;
+}
+
+const initialFormData: FormData = {
+  fullName: "",
+  registrationNumber: "",
+  email: "",
+  phone: "",
+  yearOfStudy: "",
+  branch: "",
+  gender: "",
+  codechefHandle: "",
+  leetcodeHandle: "",
+  codeforcesHandle: "",
+  transactionId: "",
+  paymentScreenshot: null,
+  confirmInfo: false,
+};
+
+const branches = [
+  "CSE", "CSBS", "CSD", "CSIT", "IT", "AI&DS", "AI&ML",
+  "ECE", "EEE", "MECH", "CIVIL", "CHEM", "BIO", "OTHER"
+];
+
+const years = ["1st Year", "2nd Year", "3rd Year"];
+const genders = ["Male", "Female", "Other", "Prefer not to say"];
+
+const steps = [
+  { icon: User, title: "Personal Info" },
+  { icon: GraduationCap, title: "Academic" },
+  { icon: Code, title: "CP Handles" },
+  { icon: CreditCard, title: "Payment" },
+  { icon: CheckCircle, title: "Confirm" },
+];
+
+const RegistrationForm = () => {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [currentStep, setCurrentStep] = useState(0);
+  const [formData, setFormData] = useState<FormData>(initialFormData);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [fileName, setFileName] = useState<string>("");
+
+  const updateField = (field: keyof FormData, value: string | boolean | File | null) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: "" }));
+    }
+  };
+
+  const validateStep = (step: number): boolean => {
+    const newErrors: FormErrors = {};
+
+    switch (step) {
+      case 0:
+        if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
+        if (!formData.registrationNumber.trim()) {
+          newErrors.registrationNumber = "Registration number is required";
+        } else if (!/^\d{12}$/.test(formData.registrationNumber)) {
+          newErrors.registrationNumber = "Must be 12 digits";
+        }
+        if (!formData.email.trim()) {
+          newErrors.email = "Email is required";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+          newErrors.email = "Invalid email format";
+        }
+        if (!formData.phone.trim()) {
+          newErrors.phone = "Phone number is required";
+        } else if (!/^\d{10}$/.test(formData.phone)) {
+          newErrors.phone = "Must be 10 digits";
+        }
+        break;
+      case 1:
+        if (!formData.yearOfStudy) newErrors.yearOfStudy = "Year of study is required";
+        if (!formData.branch) newErrors.branch = "Branch is required";
+        if (!formData.gender) newErrors.gender = "Gender is required";
+        break;
+      case 2:
+        break;
+      case 3:
+        if (!formData.transactionId.trim()) {
+          newErrors.transactionId = "Transaction ID is required";
+        } else if (!/^[a-zA-Z0-9]{8,12}$/.test(formData.transactionId)) {
+          newErrors.transactionId = "Must be 8-12 alphanumeric characters";
+        }
+        if (!formData.paymentScreenshot) {
+          newErrors.paymentScreenshot = "Payment screenshot is required";
+        }
+        break;
+      case 4:
+        if (!formData.confirmInfo) {
+          newErrors.confirmInfo = "Please confirm your information is correct";
+        }
+        break;
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = () => {
+    if (validateStep(currentStep)) {
+      setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+    }
+  };
+
+  const handleBack = () => {
+    setCurrentStep((prev) => Math.max(prev - 1, 0));
+  };
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setErrors((prev) => ({ ...prev, paymentScreenshot: "File size must be less than 5MB" }));
+        return;
+      }
+      if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
+        setErrors((prev) => ({ ...prev, paymentScreenshot: "Only PNG/JPG files are allowed" }));
+        return;
+      }
+      updateField("paymentScreenshot", file);
+      setFileName(file.name);
+    }
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!validateStep(currentStep)) return;
+
+    setIsSubmitting(true);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    setIsSubmitting(false);
+    setIsSubmitted(true);
+  };
+
+  if (isSubmitted) {
+    return (
+      <section id="register" className="section-padding bg-muted/30">
+        <div className="container-custom max-w-2xl">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center glass-card rounded-3xl p-12"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring" }}
+              className="w-20 h-20 rounded-full gradient-bg flex items-center justify-center mx-auto mb-6"
+            >
+              <Check className="text-white w-10 h-10" />
+            </motion.div>
+            <h2 className="font-heading text-3xl font-bold mb-4">
+              Registration Successful! 🎉
+            </h2>
+            <p className="text-muted-foreground mb-6">
+              Thank you for registering for iconcoderz-2k26. We'll verify your payment
+              and send a confirmation email within 24 hours.
+            </p>
+            <div className="bg-muted rounded-xl p-4 mb-6">
+              <p className="text-sm text-muted-foreground">Your Registration ID</p>
+              <p className="font-mono text-xl font-bold">
+                IC2K26-{Math.random().toString(36).substring(2, 8).toUpperCase()}
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
+
+  return (
+    <section id="register" className="section-padding bg-muted/30" ref={ref}>
+      <div className="container-custom max-w-3xl">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          className="text-center mb-12"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-4">
+            <Sparkles className="w-4 h-4" />
+            <span className="text-sm font-medium">Registration Open</span>
+          </div>
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+            Join <span className="gradient-text">iconcoderz-2k26</span>
+          </h2>
+        </motion.div>
+
+        {/* Progress Bar */}
+        <div className="mb-8">
+          <div className="flex justify-between mb-4">
+            {steps.map((step, index) => (
+              <div key={index} className="flex flex-col items-center flex-1">
+                <div
+                  className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center transition-colors duration-300 ${
+                    index <= currentStep
+                      ? "gradient-bg text-white"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  <step.icon className="w-5 h-5" />
+                </div>
+                <span
+                  className={`text-xs mt-2 hidden sm:block ${
+                    index <= currentStep ? "text-primary" : "text-muted-foreground"
+                  }`}
+                >
+                  {step.title}
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className="h-2 bg-muted rounded-full overflow-hidden">
+            <motion.div
+              className="h-full gradient-bg"
+              initial={{ width: "20%" }}
+              animate={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+              transition={{ duration: 0.5 }}
+            />
+          </div>
+        </div>
+
+        {/* Form */}
+        <div className="glass-card rounded-3xl p-6 sm:p-8">
+          <form onSubmit={handleSubmit}>
+            <AnimatePresence mode="wait">
+              {/* Step 1: Personal Info */}
+              {currentStep === 0 && (
+                <motion.div
+                  key="step1"
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  className="space-y-6"
+                >
+                  <h3 className="text-xl font-semibold flex items-center gap-2">
+                    <User className="w-6 h-6 text-primary" />
+                    Personal Information
+                  </h3>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Full Name *</label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                      placeholder="Enter your full name"
+                      value={formData.fullName}
+                      onChange={(e) => updateField("fullName", e.target.value)}
+                    />
+                    {errors.fullName && (
+                      <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" /> {errors.fullName}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Registration Number *</label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                      placeholder="12-digit registration number"
+                      value={formData.registrationNumber}
+                      onChange={(e) =>
+                        updateField("registrationNumber", e.target.value.replace(/\D/g, "").slice(0, 12))
+                      }
+                    />
+                    {errors.registrationNumber && (
+                      <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" /> {errors.registrationNumber}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Email Address *</label>
+                    <input
+                      type="email"
+                      className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                      placeholder="your.email@srkr.ac.in"
+                      value={formData.email}
+                      onChange={(e) => updateField("email", e.target.value)}
+                    />
+                    {errors.email && (
+                      <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" /> {errors.email}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Phone Number *</label>
+                    <input
+                      type="tel"
+                      className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                      placeholder="10-digit phone number"
+                      value={formData.phone}
+                      onChange={(e) =>
+                        updateField("phone", e.target.value.replace(/\D/g, "").slice(0, 10))
+                      }
+                    />
+                    {errors.phone && (
+                      <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" /> {errors.phone}
+                      </p>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Step 2: Academic Details */}
+              {currentStep === 1 && (
+                <motion.div
+                  key="step2"
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  className="space-y-6"
+                >
+                  <h3 className="text-xl font-semibold flex items-center gap-2">
+                    <GraduationCap className="w-6 h-6 text-primary" />
+                    Academic Details
+                  </h3>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Year of Study *</label>
+                    <select
+                      className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                      value={formData.yearOfStudy}
+                      onChange={(e) => updateField("yearOfStudy", e.target.value)}
+                    >
+                      <option value="">Select your year</option>
+                      {years.map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.yearOfStudy && (
+                      <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" /> {errors.yearOfStudy}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Branch *</label>
+                    <select
+                      className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                      value={formData.branch}
+                      onChange={(e) => updateField("branch", e.target.value)}
+                    >
+                      <option value="">Select your branch</option>
+                      {branches.map((branch) => (
+                        <option key={branch} value={branch}>
+                          {branch}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.branch && (
+                      <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" /> {errors.branch}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Gender *</label>
+                    <select
+                      className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                      value={formData.gender}
+                      onChange={(e) => updateField("gender", e.target.value)}
+                    >
+                      <option value="">Select gender</option>
+                      {genders.map((gender) => (
+                        <option key={gender} value={gender}>
+                          {gender}
+                        </option>
+                      ))}
+                    </select>
+                    {errors.gender && (
+                      <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" /> {errors.gender}
+                      </p>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Step 3: CP Handles */}
+              {currentStep === 2 && (
+                <motion.div
+                  key="step3"
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  className="space-y-6"
+                >
+                  <h3 className="text-xl font-semibold flex items-center gap-2">
+                    <Code className="w-6 h-6 text-primary" />
+                    Competitive Programming Handles
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Help us recognize your skills! These are optional but encouraged.
+                  </p>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">CodeChef Handle</label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                      placeholder="e.g., username123"
+                      value={formData.codechefHandle}
+                      onChange={(e) => updateField("codechefHandle", e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">LeetCode Handle</label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                      placeholder="e.g., username123"
+                      value={formData.leetcodeHandle}
+                      onChange={(e) => updateField("leetcodeHandle", e.target.value)}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Codeforces Handle</label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                      placeholder="e.g., username123"
+                      value={formData.codeforcesHandle}
+                      onChange={(e) => updateField("codeforcesHandle", e.target.value)}
+                    />
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Step 4: Payment */}
+              {currentStep === 3 && (
+                <motion.div
+                  key="step4"
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  className="space-y-6"
+                >
+                  <h3 className="text-xl font-semibold flex items-center gap-2">
+                    <CreditCard className="w-6 h-6 text-primary" />
+                    Payment Details
+                  </h3>
+
+                  <div className="bg-primary/10 rounded-xl p-6 text-center">
+                    <p className="text-sm text-primary mb-2">Registration Fee</p>
+                    <p className="text-4xl font-bold gradient-text">₹200</p>
+                  </div>
+
+                  <div className="bg-muted rounded-xl p-6 text-center">
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Scan the QR code below to pay via UPI
+                    </p>
+                    <div className="w-48 h-48 bg-background rounded-xl mx-auto flex items-center justify-center border-2 border-dashed border-border">
+                      <span className="text-muted-foreground text-sm">QR Code Placeholder</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-3">UPI ID: srkrcodingclub@upi</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Transaction ID *</label>
+                    <input
+                      type="text"
+                      className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+                      placeholder="Enter 8-12 character transaction ID"
+                      value={formData.transactionId}
+                      onChange={(e) => updateField("transactionId", e.target.value.toUpperCase())}
+                    />
+                    {errors.transactionId && (
+                      <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" /> {errors.transactionId}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2">Payment Screenshot *</label>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      className="hidden"
+                      accept="image/png,image/jpeg,image/jpg"
+                      onChange={handleFileChange}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full py-4 border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 hover:border-primary hover:bg-primary/5 transition-colors"
+                    >
+                      {fileName ? (
+                        <>
+                          <Check className="text-green-500 w-6 h-6" />
+                          <span className="text-sm text-muted-foreground">{fileName}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Upload className="text-muted-foreground w-6 h-6" />
+                          <span className="text-sm text-muted-foreground">
+                            Click to upload screenshot (PNG/JPG, max 5MB)
+                          </span>
+                        </>
+                      )}
+                    </button>
+                    {errors.paymentScreenshot && (
+                      <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                        <AlertCircle className="w-4 h-4" /> {errors.paymentScreenshot}
+                      </p>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Step 5: Confirm */}
+              {currentStep === 4 && (
+                <motion.div
+                  key="step5"
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  className="space-y-6"
+                >
+                  <h3 className="text-xl font-semibold flex items-center gap-2">
+                    <CheckCircle className="w-6 h-6 text-primary" />
+                    Review & Confirm
+                  </h3>
+
+                  <div className="bg-muted rounded-xl p-6 space-y-4">
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Full Name</p>
+                        <p className="font-medium">{formData.fullName}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Registration Number</p>
+                        <p className="font-medium">{formData.registrationNumber}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Email</p>
+                        <p className="font-medium">{formData.email}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Phone</p>
+                        <p className="font-medium">{formData.phone}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Year & Branch</p>
+                        <p className="font-medium">
+                          {formData.yearOfStudy} - {formData.branch}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Transaction ID</p>
+                        <p className="font-medium font-mono">{formData.transactionId}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <label className="flex items-start gap-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={formData.confirmInfo}
+                      onChange={(e) => updateField("confirmInfo", e.target.checked)}
+                      className="mt-1 w-5 h-5 rounded border-border text-primary focus:ring-primary"
+                    />
+                    <span className="text-sm text-muted-foreground">
+                      I confirm that all the information provided above is correct and unique.
+                      I understand that providing incorrect information may result in disqualification.
+                    </span>
+                  </label>
+                  {errors.confirmInfo && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <AlertCircle className="w-4 h-4" /> {errors.confirmInfo}
+                    </p>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Navigation Buttons */}
+            <div className="flex justify-between mt-8 pt-6 border-t border-border">
+              {currentStep > 0 && (
+                <button
+                  type="button"
+                  onClick={handleBack}
+                  className="flex items-center gap-2 px-6 py-3 rounded-xl text-muted-foreground font-medium hover:bg-muted transition-colors"
+                >
+                  <ArrowLeft className="w-5 h-5" />
+                  Back
+                </button>
+              )}
+
+              {currentStep < steps.length - 1 ? (
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  className="ml-auto flex items-center gap-2 btn-hero-primary"
+                >
+                  Next
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              ) : (
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="ml-auto flex items-center gap-2 btn-hero-primary disabled:opacity-50"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      Submit Registration
+                      <CheckCircle className="w-5 h-5" />
+                    </>
+                  )}
+                </button>
+              )}
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default RegistrationForm;
