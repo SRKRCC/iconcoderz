@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Code2, Instagram, Github, Linkedin, Heart } from "lucide-react";
+import { Code2, Instagram, Github, Linkedin } from "lucide-react";
 
 const quickLinks = [
   { name: "Home", href: "#home" },
@@ -111,10 +111,7 @@ const Footer = () => {
             <p className="text-background/60 text-sm text-center md:text-left">
               © 2026 SRKR Coding Club. All rights reserved.
             </p>
-            <p className="text-background/60 text-sm flex items-center gap-1">
-              Made with <Heart className="w-4 h-4 text-primary fill-current" /> for 
-              <span className="text-primary font-semibold ml-1">iconcoderz-2k26</span>
-            </p>
+            
           </div>
         </div>
       </div>

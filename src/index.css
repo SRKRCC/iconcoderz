@@ -34,14 +34,14 @@
   --radius: 0.75rem;
 
   /* Custom gradients and effects */
-  --gradient-primary: linear-gradient(135deg, #d97706 0%, #6366f1 100%);
+  --gradient-primary: linear-gradient(135deg, #e9820c 0%, #575adf 100%);
   --gradient-hero: linear-gradient(135deg, rgba(217, 119, 6, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
   --glow-primary: 0 0 40px rgba(217, 119, 6, 0.4);
   --glow-secondary: 0 0 40px rgba(99, 102, 241, 0.4);
 }
 
 .dark {
-  --background: #0a0a0a;
+  --background: #222222;
   --foreground: #fafafa;
 
   --card: #171717;
@@ -76,13 +76,9 @@
 }
 
 /* Base Styles */
-* {
-  margin: 0;
-  padding: 0;
+*, *::before, *::after {
   box-sizing: border-box;
-  border-color: var(--border);
 }
-
 html {
   scroll-behavior: smooth;
 }
@@ -307,7 +303,15 @@ code, pre, .mono {
 }
 
 .container-custom {
-  max-width: 80rem;
+  max-width: 90rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.registration-container-custom{
+  max-width: 70rem;
   margin-left: auto;
   margin-right: auto;
   padding-left: 1rem;

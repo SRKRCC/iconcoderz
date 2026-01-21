@@ -101,7 +101,7 @@ const ContactSection = () => {
         >
           {contactInfo.map((info, index) => (
             <motion.div
-              key={info.title}
+              key={info.title || index}
               variants={itemVariants}
               whileHover={{ y: -8 }}
               className="glass-card rounded-2xl p-8 text-center card-hover"
