@@ -1,6 +1,10 @@
 import { useState, useRef } from "react";
 import type { ChangeEvent, FormEvent  } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { registrationApi } from "../api/registration";
+import type { RegistrationData } from "../api/registration";
 import {
   User,
   GraduationCap,
@@ -52,12 +56,22 @@ const initialFormData: FormData = {
 };
 
 const branches = [
-  "CSE", "CSBS", "CSD", "CSIT", "IT", "AI&DS", "AI&ML",
+  "CSE", "CSBS", "CSD", "CSIT", "IT", "AI_DS", "AI_ML",
   "ECE", "EEE", "MECH", "CIVIL", "CHEM", "BIO", "OTHER"
 ];
 
-const years = ["1st Year", "2nd Year", "3rd Year"];
-const genders = ["Male", "Female", "Other", "Prefer not to say"];
+const years = [
+  { label: "1st Year", value: "FIRST_YEAR" },
+  { label: "2nd Year", value: "SECOND_YEAR" },
+  { label: "3rd Year", value: "THIRD_YEAR" }
+];
+
+const genders = [
+  { label: "Male", value: "MALE" },
+  { label: "Female", value: "FEMALE" },
+  { label: "Other", value: "OTHER" },
+  { label: "Prefer not to say", value: "PREFER_NOT_TO_SAY" }
+];
 
 const steps = [
   { icon: User, title: "Personal Info" },
@@ -78,6 +92,21 @@ const RegistrationForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [fileName, setFileName] = useState<string>("");
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [apiError, setApiError] = useState<string>("");
+
+  const registrationMutation = useMutation({
+    mutationFn: registrationApi.register,
+    onSuccess: (data) => {
+      setIsSubmitted(true);
+      setIsSubmitting(false);
+      console.log("Registration successful:", data.registrationCode);
+    },
+    onError: (error: Error) => {
+      setApiError(error.message);
+      setIsSubmitting(false);
+    },
+  });
 
   const updateField = (field: keyof FormData, value: string | boolean | File | null) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -94,8 +123,8 @@ const RegistrationForm = () => {
         if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
         if (!formData.registrationNumber.trim()) {
           newErrors.registrationNumber = "Registration number is required";
-        } else if (!/^\d{10}$/.test(formData.registrationNumber)) {
-          newErrors.registrationNumber = "Must be 10 digits";
+        } else if (!/^[a-zA-Z0-9]{10}$/.test(formData.registrationNumber)) {
+          newErrors.registrationNumber = "Must be 10 alphanumeric characters";
         }
         if (!formData.email.trim()) {
           newErrors.email = "Email is required";
@@ -167,13 +196,61 @@ const RegistrationForm = () => {
     if (!validateStep(currentStep)) return;
 
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    setIsSubmitting(false);
-    setIsSubmitted(true);
+    setApiError("");
+    setUploadProgress(0);
+
+    try {
+      const signature = await registrationApi.getUploadSignature();
+
+      if (!formData.paymentScreenshot) {
+        throw new Error("Payment screenshot is required");
+      }
+
+      const cloudinaryFormData = new FormData();
+      cloudinaryFormData.append("file", formData.paymentScreenshot);
+      cloudinaryFormData.append("timestamp", signature.timestamp.toString());
+      cloudinaryFormData.append("signature", signature.signature);
+      cloudinaryFormData.append("api_key", signature.apiKey);
+      cloudinaryFormData.append("folder", "iconcoderz-payments");
+
+      const cloudinaryResponse = await axios.post(
+        `https://api.cloudinary.com/v1_1/${signature.cloudName}/image/upload`,
+        cloudinaryFormData,
+        {
+          onUploadProgress: (progressEvent) => {
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / (progressEvent.total || 100)
+            );
+            setUploadProgress(percentCompleted);
+          },
+        }
+      );
+
+      const registrationData: RegistrationData = {
+        fullName: formData.fullName,
+        registrationNumber: formData.registrationNumber,
+        email: formData.email,
+        phone: formData.phone,
+        yearOfStudy: formData.yearOfStudy,
+        branch: formData.branch,
+        gender: formData.gender,
+        codechefHandle: formData.codechefHandle || undefined,
+        leetcodeHandle: formData.leetcodeHandle || undefined,
+        codeforcesHandle: formData.codeforcesHandle || undefined,
+        transactionId: formData.transactionId,
+        screenshotUrl: cloudinaryResponse.data.secure_url,
+      };
+
+      await registrationMutation.mutateAsync(registrationData);
+    } catch (error: Error | any) {
+      console.error("Registration error:", error);
+      setApiError(error.message || "Registration failed. Please try again.");
+      setIsSubmitting(false);
+    }
   };
 
   const registrationOpenDate = new Date("2026-01-25T00:00:00+05:30");
-  const isRegistrationOpen = new Date() >= registrationOpenDate;
+  const isRegistrationOpen = import.meta.env.DEV || new Date() >= registrationOpenDate;
 
   if (!isRegistrationOpen) {
     return (
@@ -307,10 +384,34 @@ const RegistrationForm = () => {
 
         {/* Form */}
         <div className="glass-card rounded-3xl p-6 sm:p-8">
+          {/* Upload Progress */}
+          {uploadProgress > 0 && uploadProgress < 100 && (
+            <div className="mb-4 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm text-blue-400">Uploading payment screenshot...</span>
+                <span className="text-sm font-medium text-blue-400">{uploadProgress}%</span>
+              </div>
+              <div className="w-full bg-gray-700 rounded-full h-2">
+                <div 
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${uploadProgress}%` }}
+                />
+              </div>
+            </div>
+          )}
+
+          {apiError && (
+            <div className="mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-sm text-red-400 font-medium">Registration Failed</p>
+                <p className="text-sm text-red-300/80 mt-1">{apiError}</p>
+              </div>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit}>
             <AnimatePresence mode="wait">
-              {/* Step 1: Personal Info */}
-              {/* Step 1: Personal Info */}
               {currentStep === 0 && (
                 <motion.div
                   key="step1"
@@ -432,8 +533,8 @@ const RegistrationForm = () => {
                       >
                         <option value="">Select year</option>
                         {years.map((year) => (
-                          <option key={year} value={year}>
-                            {year}
+                          <option key={year.value} value={year.value}>
+                            {year.label}
                           </option>
                         ))}
                       </select>
@@ -476,8 +577,8 @@ const RegistrationForm = () => {
                       >
                         <option value="">Select gender</option>
                         {genders.map((g) => (
-                          <option key={g} value={g}>
-                            {g}
+                          <option key={g.value} value={g.value}>
+                            {g.label}
                           </option>
                         ))}
                       </select>

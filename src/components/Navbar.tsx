@@ -60,7 +60,6 @@ const Navbar = () => {
             </div>
             <span className="font-heading font-bold text-xl hidden sm:block">
               <span className="gradient-text">Iconcoderz</span>
-              <span className="text-muted-foreground">-2k26</span>
             </span>
           </a>
 

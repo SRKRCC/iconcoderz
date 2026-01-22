@@ -1,17 +1,33 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { adminApi } from "../api/admin";
+import { useAuthStore } from "../stores/authStore";
+import { Loader2 } from "lucide-react";
 
 const AdminLogin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
-  const nav = useNavigate() ;
+  const navigate = useNavigate();
+  const setAuth = useAuthStore((state) => state.setAuth);
+
+  const loginMutation = useMutation({
+    mutationFn: adminApi.login,
+    onSuccess: (data) => {
+      setAuth(data.admin, data.token);
+      navigate("/admin/dashboard");
+    },
+    onError: (error: Error) => {
+      setError(error.message);
+    },
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log({ email, password });
-    nav('/admin/dashboard')
-    // later: connect API here
+    setError("");
+    loginMutation.mutate({ email, password });
   };
 
   return (
@@ -30,6 +46,12 @@ const AdminLogin = () => {
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Error Message */}
+          {error && (
+            <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+              {error}
+            </div>
+          )}
           
           {/* Email */}
           <div>
@@ -64,9 +86,17 @@ const AdminLogin = () => {
           {/* Button */}
           <button
             type="submit"
-            className="w-full py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 transition"
+            disabled={loginMutation.isPending}
+            className="w-full py-2 rounded-lg bg-primary text-primary-foreground font-medium hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            Login
+            {loginMutation.isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Logging in...
+              </>
+            ) : (
+              "Login"
+            )}
           </button>
         </form>
 

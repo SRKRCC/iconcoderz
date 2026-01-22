@@ -1,71 +1,55 @@
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { adminApi } from "../api/admin";
+import { Loader2 } from "lucide-react";
 
-/* ================= MOCK DATA ================= */
-interface User {
-  id: string;
-  registrationCode: string;
-  fullName: string;
-  branch: string;
-  yearOfStudy: string;
-  paymentStatus: "PENDING" | "VERIFIED" | "REJECTED";
-  createdAt: string;
-}
-
-const users: User[] = [
-  {
-    id: "1",
-    registrationCode: "IC2K26-0001",
-    fullName: "Ashok Bongu",
-    branch: "CSE",
-    yearOfStudy: "THIRD_YEAR",
-    paymentStatus: "PENDING",
-    createdAt: "2026-01-21T10:00:00",
-  },
-  {
-    id: "2",
-    registrationCode: "IC2K26-0002",
-    fullName: "Sai Praneeth",
-    branch: "ECE",
-    yearOfStudy: "SECOND_YEAR",
-    paymentStatus: "VERIFIED",
-    createdAt: "2026-01-21T11:00:00",
-  },
-  {
-    id: "3",
-    registrationCode: "IC2K26-0003",
-    fullName: "Nikhil Reddy",
-    branch: "IT",
-    yearOfStudy: "FOURTH_YEAR",
-    paymentStatus: "REJECTED",
-    createdAt: "2026-01-21T12:00:00",
-  },
-];
-
-/* ================= COMPONENT ================= */
 const AdminDashboard = () => {
-  const [currentDate] = useState(new Date().toLocaleString());
+  const { data: stats, isLoading, error } = useQuery({
+    queryKey: ["admin", "stats"],
+    queryFn: adminApi.getDashboardStats,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">Failed to load dashboard</p>
+          <p className="text-sm text-muted-foreground">{(error as Error).message}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!stats) return null;
 
   // Metrics
-  const totalParticipants = users.length;
-  const verifiedPayments = users.filter((u) => u.paymentStatus === "VERIFIED").length;
-  const pendingPayments = users.filter((u) => u.paymentStatus === "PENDING").length;
-  const rejectedPayments = users.filter((u) => u.paymentStatus === "REJECTED").length;
+  const totalParticipants = stats.totalParticipants;
+  const verifiedPayments = stats.verifiedPayments;
+  const pendingPayments = stats.pendingPayments;
+  const rejectedPayments = stats.rejectedPayments;
 
   // Branch distribution
-  const branchCounts = users.reduce<Record<string, number>>((acc, u) => {
-    acc[u.branch] = (acc[u.branch] || 0) + 1;
-    return acc;
-  }, {});
+  const branchCounts = stats.branchDistribution;
 
   // Recent registrations
-  const recentRegistrations = [...users].sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)).slice(0, 5);
+  const recentRegistrations = stats.recentRegistrations;
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
         <h1 className="text-3xl font-bold mb-2 md:mb-0">Iconcoderz 2k26 Admin Dashboard</h1>
-        <span className="text-sm text-muted-foreground">{currentDate}</span>
+        <span className="text-sm text-muted-foreground">{new Date().toLocaleString()}</span>
       </div>
 
       {/* Metrics Cards */}

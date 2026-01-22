@@ -1,11 +1,14 @@
 import { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { adminApi } from "../api/admin";
+import type { User } from "../api/registration";
+import { Loader2 } from "lucide-react";
 
 /* ================== TYPES ================== */
 export type YearOfStudy =
   | "FIRST_YEAR"
   | "SECOND_YEAR"
-  | "THIRD_YEAR"
-  | "FOURTH_YEAR";
+  | "THIRD_YEAR";
 
 export type Branch =
   | "CSE"
@@ -27,39 +30,6 @@ export type Gender = "MALE" | "FEMALE" | "OTHER" | "PREFER_NOT_TO_SAY";
 
 export type PaymentStatus = "PENDING" | "VERIFIED" | "REJECTED";
 
-export interface User {
-  id: string;
-  registrationCode: string;
-  fullName: string;
-  email: string;
-  phone: string;
-  branch: Branch;
-  yearOfStudy: YearOfStudy;
-  gender: Gender;
-  transactionId: string;
-  screenshotUrl: string;
-  paymentStatus: PaymentStatus;
-}
-
-/* ================== MOCK DATA ================== */
-const initialUsers: User[] = [
-  {
-    id: "1",
-    registrationCode: "IC2K26-0001",
-    fullName: "Ashok Bongu",
-    email: "ashok@gmail.com",
-    phone: "9876543210",
-    branch: "CSE",
-    yearOfStudy: "THIRD_YEAR",
-    gender: "MALE",
-    transactionId: "TXN123456",
-    screenshotUrl:
-      "https://imgv2-1-f.scribdassets.com/img/document/424626648/original/0e766dfd48/1?v=1",
-    paymentStatus: "PENDING",
-  },
-  // Add more users here
-];
-
 /* ================== STYLES ================== */
 const statusStyles: Record<PaymentStatus, string> = {
   PENDING: "bg-yellow-100 text-yellow-700",
@@ -69,24 +39,75 @@ const statusStyles: Record<PaymentStatus, string> = {
 
 /* ================== COMPONENT ================== */
 const Users = () => {
-  const [users, setUsers] = useState<User[]>(initialUsers);
+  const queryClient = useQueryClient();
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [filterStatus, setFilterStatus] = useState<string>("");
+
+  // Fetch users
+  const { data: users = [], isLoading, error } = useQuery({
+    queryKey: ["admin", "users", filterStatus],
+    queryFn: () =>
+      adminApi.getUsers(filterStatus ? { paymentStatus: filterStatus } : undefined),
+  });
+
+  // Update payment status mutation
+  const updateStatusMutation = useMutation({
+    mutationFn: ({ userId, status }: { userId: string; status: PaymentStatus }) =>
+      adminApi.updatePaymentStatus(userId, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin", "users"] });
+      if (selectedUser) {
+        setSelectedUser(null);
+      }
+    },
+  });
 
   const updatePaymentStatus = (id: string, status: PaymentStatus) => {
-    setUsers((prev) =>
-      prev.map((u) => (u.id === id ? { ...u, paymentStatus: status } : u))
-    );
-    if (selectedUser?.id === id) {
-      setSelectedUser({ ...selectedUser, paymentStatus: status });
-    }
+    updateStatusMutation.mutate({ userId: id, status });
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Loading users...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">Failed to load users</p>
+          <p className="text-sm text-muted-foreground">{(error as Error).message}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background p-6 md:p-10 flex">
       {/* ========== USERS TABLE ========== */}
       <div className="flex-1">
-        <h2 className="text-2xl font-heading mb-4">Users</h2>
-        <p className="text-muted-foreground mb-6">Manage registered users here.</p>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-heading">Users</h2>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="px-4 py-2 rounded-lg border border-border bg-background"
+          >
+            <option value="">All Statuses</option>
+            <option value="PENDING">Pending</option>
+            <option value="VERIFIED">Verified</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+        </div>
+        <p className="text-muted-foreground mb-6">
+          {users.length} {users.length === 1 ? "user" : "users"} found
+        </p>
 
         <div className="glass-card rounded-xl overflow-x-auto">
           <table className="min-w-full text-sm">

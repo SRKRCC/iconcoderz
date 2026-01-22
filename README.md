@@ -6,7 +6,7 @@
 
 **Event Name:** Iconcoderz-2k26  
 **Tagline:** Decode • Compete • Dominate  
-**Event Date:** 23rd February 2026 (Monday) | 9:00 AM IST  
+**Event Date:** 23rd February 2026 (Monday) | 1:30 PM IST  
 **Mode:** Online  
 **Participation:** Individual Only  
 **Eligibility:** 1st, 2nd & 3rd Year Students of SRKR Engineering College  

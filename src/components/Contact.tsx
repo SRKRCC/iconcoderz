@@ -20,7 +20,7 @@ const contactInfo = [
   {
     icon: Phone,
     title: "Reach Out",
-    content: ["+91 98765 43210", "srkrcodingclub@srkr.ac.in"],
+    content: ["+91 85002 16667", "srkrcodingclub@gmail.com"],
   },
   {
     icon: Users,

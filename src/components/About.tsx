@@ -21,7 +21,7 @@ const facts = [
   },
   {
     icon: Clock,
-    title: "Feb 23, 9 AM IST",
+    title: "Feb 23, 1:30 PM IST",
     description: "Mark your calendar for the competition day",
   },
 ];

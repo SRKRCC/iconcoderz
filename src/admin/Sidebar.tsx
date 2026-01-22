@@ -1,4 +1,5 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuthStore } from "../stores/authStore";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -12,6 +13,14 @@ const navItems = [
 
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const clearAuth = useAuthStore((state) => state.clearAuth);
+
+  const handleLogout = () => {
+    clearAuth();
+    navigate('/admin-login');
+    onClose();
+  };
 
   return (
     <>
@@ -66,6 +75,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
         {/* Logout */}
         <div className="absolute bottom-4 left-4 right-4">
           <button
+            onClick={handleLogout}
             className="w-full px-4 py-2 rounded-lg bg-destructive text-white"
           >
             Logout

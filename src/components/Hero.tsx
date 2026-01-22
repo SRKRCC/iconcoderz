@@ -199,7 +199,7 @@ const HeroSection = () => {
           transition={{ duration: 0.6, delay: 0.5 }}
           className="text-base sm:text-lg text-muted-foreground mb-10"
         >
-          February 23, 2026 • 9:00 AM IST • SRKR Engineering College, Bhimavaram
+          February 23, 2026 • 1:30 PM IST • SRKR Engineering College, Bhimavaram
         </motion.p>
 
         {/* Countdown Timer */}
