@@ -13,11 +13,8 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Terms from "./pages/TermsAndConditions";
 
 import AdminLogin from "./admin/AdminLogin";
-import AdminLayout from "./admin/AdminLayout";
-import AdminDashboard from "./admin/Dashboard";
-import Users from "./admin/Users";
+import AdminRoutes from "./routes/AdminRoutes";
 
-/* ================= HOME ================= */
 const Home = () => (
   <>
     <Navbar />
@@ -43,11 +40,8 @@ const App = () => {
         {/* Admin Auth */}
         <Route path="/admin-login" element={<AdminLogin />} />
 
-        {/* Admin Layout + Child Routes */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="users" element={<Users />} />
-        </Route>
+        {/* Admin Routes */}
+        {AdminRoutes}
       </Routes>
     </div>
   );

@@ -9,6 +9,8 @@ interface SidebarProps {
 const navItems = [
   { name: "Dashboard", path: "/admin/dashboard" },
   { name: "Users", path: "/admin/users" },
+  { name: "Attendance", path: "/admin/attendance" },
+  { name: "Attendance List", path: "/admin/attendance-list" },
 ];
 
 const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
