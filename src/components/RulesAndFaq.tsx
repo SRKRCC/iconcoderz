@@ -7,7 +7,7 @@ const rules = [
     id: "rule-1",
     question: "Who can participate?",
     answer:
-      "Only 1st, 2nd, and 3rd year students of SRKR Engineering College are eligible to participate. Final year students are not allowed in this edition.",
+      "ICONCODERZ-2K26 is open to engineering students from various colleges.Engineering students from 1st to 4th year can participate.Beginner Level for 1st & 2nd years and Expert Level for 3rd & 4th years.",
   },
   {
     id: "rule-2",
@@ -19,7 +19,7 @@ const rules = [
     id: "rule-3",
     question: "What is the registration fee?",
     answer:
-      "The registration fee is ₹200 per participant. Payment must be made via UPI, and a screenshot of the transaction must be uploaded during registration.",
+      "The registration fee is ₹100 per participant, with a 50% discount for SRKR Coding Club affiliates.",
   },
   {
     id: "rule-4",
@@ -46,13 +46,13 @@ const faqs = [
     id: "faq-2",
     question: "Can I use online resources during the contest?",
     answer:
-      "Yes, you may use standard online resources like documentation. However, discussing problems with others or using AI tools during the contest is strictly prohibited.",
+      "No, the use of online resources or external help is strictly prohibited during the contest.",
   },
   {
     id: "faq-3",
     question: "When will results be announced?",
     answer:
-      "Results will be announced within 24-48 hours after the contest ends. Winners will be notified via email and on our official social media channels.",
+      "The results will be announced on the same day after the contest concludes.",
   },
   {
     id: "faq-4",
