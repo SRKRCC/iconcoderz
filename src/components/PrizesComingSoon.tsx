@@ -1,11 +1,26 @@
 import { motion } from "framer-motion";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
-import { Gift, Sparkles, Bell } from "lucide-react";
+import { Trophy, Award, Sparkles } from "lucide-react";
 
 const PrizesSection = () => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
+
+  const categories = [
+    {
+      title: "Beginner Level",
+      subtitle: "1st & 2nd Year",
+      prizes: ["1st Prize", "2nd Prize"],
+      icon: "🌟",
+    },
+    {
+      title: "Expert Level",
+      subtitle: "3rd & 4th Year",
+      prizes: ["1st Prize", "2nd Prize"],
+      icon: "🏆",
+    },
+  ];
 
   return (
     <section id="prizes" className="section-padding bg-muted" ref={ref}>
@@ -14,98 +29,105 @@ const PrizesSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="relative overflow-hidden rounded-3xl gradient-bg p-8 md:p-12 lg:p-16 text-center"
+          className="text-center mb-12"
         >
-          {/* Animated background elements */}
+          <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold gradient-text mb-4">
+            Prizes & Recognition
+          </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Compete for your share of the prize pool and earn recognition!
+          </p>
+        </motion.div>
+
+        {/* Prize Grid - Pool + Categories */}
+        <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
+          {/* Prize Pool Card */}
           <motion.div
-            className="absolute top-0 left-0 w-full h-full"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="relative overflow-hidden rounded-2xl gradient-bg p-6 md:p-8 flex flex-col justify-center"
           >
-            {[...Array(6)].map((_, i) => (
+            <div className="relative z-10 text-center">
               <motion.div
-                key={i}
-                className="absolute"
-                style={{
-                  top: `${Math.random() * 100}%`,
-                  left: `${Math.random() * 100}%`,
-                }}
-                animate={{
-                  y: [0, -20, 0],
-                  opacity: [0.3, 0.6, 0.3],
-                  scale: [1, 1.2, 1],
-                }}
-                transition={{
-                  duration: 3 + i,
-                  repeat: Infinity,
-                  delay: i * 0.5,
-                }}
+                initial={{ scale: 0 }}
+                animate={isInView ? { scale: 1 } : {}}
+                transition={{ duration: 0.5, delay: 0.4, type: "spring" }}
+                className="inline-flex items-center justify-center w-16 h-16 rounded-xl bg-white/20 backdrop-blur-sm mb-4"
               >
-                <Sparkles className="w-6 h-6 text-white/30" />
+                <Trophy className="w-8 h-8 text-white" />
               </motion.div>
-            ))}
+              <h3 className="font-heading text-4xl md:text-5xl font-bold text-white mb-2">
+                ₹10,000
+              </h3>
+              <p className="text-lg text-white/90 font-medium mb-3">
+                Prize Pool
+              </p>
+              <div className="flex justify-center gap-1">
+                {[...Array(3)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    animate={{
+                      y: [0, -5, 0],
+                      opacity: [0.5, 1, 0.5],
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      delay: i * 0.2,
+                    }}
+                  >
+                    <Sparkles className="w-4 h-4 text-white/60" />
+                  </motion.div>
+                ))}
+              </div>
+            </div>
           </motion.div>
 
-          <div className="relative z-10">
+          {/* Prize Categories */}
+          {categories.map((category, idx) => (
             <motion.div
-              initial={{ scale: 0 }}
-              animate={isInView ? { scale: 1 } : {}}
-              transition={{ duration: 0.5, delay: 0.2, type: "spring" }}
-              className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-sm mb-6"
-            >
-              <Gift className="w-10 h-10 text-white" />
-            </motion.div>
-
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
+              key={category.title}
+              initial={{ opacity: 0, y: 30 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4"
+              transition={{ duration: 0.6, delay: 0.4 + idx * 0.1 }}
+              className="glass-card p-6 md:p-8 rounded-2xl hover:shadow-xl transition-shadow"
             >
-              Prizes & Perks Coming Soon 🎁
-            </motion.h2>
+              <div className="flex items-center gap-3 mb-4">
+                <span className="text-4xl">{category.icon}</span>
+                <div>
+                  <h3 className="font-heading text-2xl font-bold text-foreground">
+                    {category.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">{category.subtitle}</p>
+                </div>
+              </div>
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="text-lg md:text-xl text-white/80 mb-8 max-w-2xl mx-auto"
-            >
-              Stay tuned for exciting rewards, recognition, and exclusive perks 
-              for the top performers!
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.5 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4"
-            >
-              <div className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/20 backdrop-blur-sm text-white">
-                <Bell className="w-5 h-5" />
-                <span className="font-medium">Announcements coming soon</span>
+              <div className="space-y-3">
+                {category.prizes.map((prize, prizeIdx) => (
+                  <div
+                    key={prize}
+                    className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 border border-border"
+                  >
+                    <Award className={`w-5 h-5 ${prizeIdx === 0 ? 'text-yellow-500' : 'text-gray-400'}`} />
+                    <span className="font-medium text-foreground">{prize}</span>
+                    <span className="ml-auto text-sm text-muted-foreground">TBA</span>
+                  </div>
+                ))}
               </div>
             </motion.div>
+          ))}
+        </div>
 
-            {/* Decorative elements */}
-            <motion.div
-              className="absolute -bottom-4 -right-4 w-32 h-32 rounded-full bg-white/10 blur-2xl"
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.3, 0.5, 0.3],
-              }}
-              transition={{ duration: 4, repeat: Infinity }}
-            />
-            <motion.div
-              className="absolute -top-4 -left-4 w-24 h-24 rounded-full bg-white/10 blur-2xl"
-              animate={{
-                scale: [1.2, 1, 1.2],
-                opacity: [0.3, 0.5, 0.3],
-              }}
-              transition={{ duration: 4, repeat: Infinity, delay: 2 }}
-            />
-          </div>
-        </motion.div>
+        {/* Note */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={isInView ? { opacity: 1 } : {}}
+          transition={{ duration: 0.6, delay: 0.8 }}
+          className="text-center text-sm text-muted-foreground mt-8"
+        >
+          Prize distribution will be announced soon. Stay tuned!
+        </motion.p>
       </div>
     </section>
   );

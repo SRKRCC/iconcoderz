@@ -148,7 +148,9 @@ const CountdownTimer = () => {
 
 const HeroSection = () => {
   const registrationOpenDate = new Date("2026-01-25T00:00:00+05:30");
-  const isRegistrationOpen = new Date() >= registrationOpenDate;
+  const registrationCloseDate = new Date("2026-02-12T23:59:59+05:30");
+  const now = new Date();
+  const isRegistrationOpen = now >= registrationOpenDate && now <= registrationCloseDate;
 
   const scrollToSection = (href: string) => {
     const element = document.querySelector(href);
@@ -260,9 +262,13 @@ const HeroSection = () => {
                 >
                   Register Now
                 </button>
-              ) : (
+              ) : now < registrationOpenDate ? (
                 <span className="px-8 py-4 rounded-full glass-card text-lg font-medium text-muted-foreground">
                   Registrations open 25th Jan
+                </span>
+              ) : (
+                <span className="px-8 py-4 rounded-full glass-card text-lg font-medium text-red-400">
+                  Registrations Closed
                 </span>
               )}
               <button

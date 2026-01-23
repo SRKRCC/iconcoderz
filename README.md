@@ -9,7 +9,7 @@
 **Event Date:** 23rd February 2026 (Monday) | 1:30 PM IST  
 **Mode:** Online  
 **Participation:** Individual Only  
-**Eligibility:** 1st, 2nd & 3rd Year Students of SRKR Engineering College  
+**Eligibility:** All Year Students of SRKR Engineering College  
 **Registration Fee:** ₹200/-  
 **Venue:** SRKR Engineering College, Bhimavaram  
 **Registration Link:** [srkrcodingclub.in](https://srkrcodingclub.in)  
@@ -50,7 +50,7 @@ Top performers will be recognized with exciting cash prizes and certificates, pr
 <details>
 <summary><strong style="font-size: x-large;">Rules and Regulations</strong></summary>
 
-**Eligibility:** Only 1st, 2nd, and 3rd year students of SRKR Engineering College are eligible to participate. Final year students are not allowed.
+**Eligibility:** All year students of SRKR Engineering College are eligible to participate. Final year students are not allowed.
 
 **Participation:** This is an individual competition. Team entries are not allowed.
 
@@ -137,7 +137,7 @@ timeline
 
 <details>
 <summary>Who can participate in Iconcoderz-2k26?</summary>
-Only 1st, 2nd, and 3rd year students of SRKR Engineering College are eligible.
+All students of SRKR Engineering College are eligible.
 </details>
 
 <details>

@@ -7,7 +7,7 @@ export interface User {
   registrationNumber: string;
   email: string;
   phone: string;
-  yearOfStudy: 'FIRST_YEAR' | 'SECOND_YEAR' | 'THIRD_YEAR';
+  yearOfStudy: 'FIRST_YEAR' | 'SECOND_YEAR' | 'THIRD_YEAR' | 'FOURTH_YEAR';
   branch: string;
   gender: 'MALE' | 'FEMALE' | 'OTHER' | 'PREFER_NOT_TO_SAY';
   codechefHandle?: string;
@@ -16,6 +16,10 @@ export interface User {
   transactionId: string;
   screenshotUrl: string;
   paymentStatus: 'PENDING' | 'VERIFIED' | 'REJECTED';
+  attended: boolean;
+  attendedAt?: string | null;
+  attendedBy?: string | null;
+  checkInCount: number;
   createdAt: string;
   updatedAt: string;
 }

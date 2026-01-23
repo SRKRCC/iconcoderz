@@ -63,7 +63,8 @@ const branches = [
 const years = [
   { label: "1st Year", value: "FIRST_YEAR" },
   { label: "2nd Year", value: "SECOND_YEAR" },
-  { label: "3rd Year", value: "THIRD_YEAR" }
+  { label: "3rd Year", value: "THIRD_YEAR" },
+  { label: "4th Year", value: "FOURTH_YEAR" }
 ];
 
 const genders = [
