@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Code2, Instagram, Github, Linkedin } from "lucide-react";
+import { Instagram, Github, Linkedin } from "lucide-react";
 
 const quickLinks = [
   { name: "Home", href: "#home" },
@@ -36,8 +36,8 @@ const Footer = () => {
             className="space-y-4"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center">
-                <Code2 className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center overflow-hidden">
+                <img src="/logo.png" alt="SRKR Coding Club Logo" className="w-full h-full object-cover" />
               </div>
               <span className="font-heading font-bold text-xl">
                 SRKR Coding Club

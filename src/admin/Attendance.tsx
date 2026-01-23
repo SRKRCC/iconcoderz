@@ -75,45 +75,73 @@ const Attendance: React.FC = () => {
     }
   };
 
-  const startScanning = async () => {
-    try {
-      setError('');
-      setScanResult(null);
-      
-      const scanner = new Html5Qrcode('qr-reader');
-      scannerRef.current = scanner;
+  useEffect(() => {
+    let mounted = true;
 
-      await scanner.start(
-        { facingMode: 'environment' },
-        {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
-        },
-        handleScan,
-        () => {} // onScanFailure - ignore
-      );
+    const initScanner = async () => {
+      if (isScanning && !scannerRef.current) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        if (!mounted) return;
 
-      setIsScanning(true);
-    } catch (err) {
-      setError(`Camera error: ${err instanceof Error ? err.message : 'Could not start camera'}`);
+        try {
+          const scanner = new Html5Qrcode('qr-reader');
+          scannerRef.current = scanner;
+
+          await scanner.start(
+            { facingMode: 'environment' },
+            {
+              fps: 10,
+              qrbox: { width: 250, height: 250 },
+            },
+            handleScan,
+            () => {} // onScanFailure - ignore
+          );
+        } catch (err) {
+          console.error('Scanner init error:', err);
+          if (mounted) {
+            setError(`Camera error: ${err instanceof Error ? err.message : 'Could not start camera'}`);
+            setIsScanning(false);
+          }
+        }
+      }
+    };
+
+    if (isScanning) {
+      initScanner();
     }
+
+    return () => {
+      mounted = false;
+      if (scannerRef.current) {
+        const scanner = scannerRef.current;
+        scannerRef.current = null;
+        
+        try {
+           if (scanner.isScanning) {
+             scanner.stop().then(() => scanner.clear()).catch(console.error);
+           } else {
+             scanner.clear();
+           }
+        } catch (e) {
+          console.error("Error during scanner cleanup", e);
+        }
+      }
+    };
+  }, [isScanning]);
+
+  const startScanning = () => {
+    setError('');
+    setScanResult(null);
+    setIsScanning(true);
   };
 
-  const stopScanning = async () => {
-    if (scannerRef.current) {
-      try {
-        await scannerRef.current.stop();
-        scannerRef.current.clear();
-        scannerRef.current = null;
-      } catch (err) {
-        console.error('Failed to stop scanner:', err);
-      }
-    }
+  const stopScanning = () => {
     setIsScanning(false);
   };
 
   const handleScan = async (decodedText: string) => {
-    await stopScanning();
+    stopScanning();
     await processQRCode(decodedText);
   };
 

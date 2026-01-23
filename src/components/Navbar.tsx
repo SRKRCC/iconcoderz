@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Code2 } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import ThemeToggle from "../context/ThemeToggle";
 
 const navLinks = [
@@ -55,8 +55,8 @@ const Navbar = () => {
             }}
             className="flex items-center gap-2 group"
           >
-            <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center">
-              <Code2 className="w-6 h-6 text-white" />
+            <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center overflow-hidden">
+              <img src="/logo.png" alt="IconCoderz Logo" className="w-full h-full object-cover" />
             </div>
             <span className="font-heading font-bold text-xl hidden sm:block">
               <span className="gradient-text">Iconcoderz</span>

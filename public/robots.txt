@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://iconcoderz.srkrcodingclub.in/sitemap.xml
