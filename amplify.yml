@@ -1,19 +1,18 @@
 version: 1
-applications:
-  - appRoot: client
-    frontend:
-      phases:
-        preBuild:
-          commands:
-            - corepack enable
-            - pnpm install
-        build:
-          commands:
-            - pnpm build
-      artifacts:
-        baseDirectory: build
-        files:
-          - '**/*'
-      cache:
-        paths:
-          - ~/.pnpm-store/**/*
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - corepack enable
+        - pnpm install
+    build:
+      commands:
+        - pnpm build
+  artifacts:
+    baseDirectory: build
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+      - ~/.pnpm-store/**/*
