@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
 import { ChevronDown } from "lucide-react";
+import { MagneticButton, RevealText, SpotlightCard } from "./ui/MotionComponents";
 
 const codeSnippets = [
   "function solve(n) {",
@@ -25,6 +26,9 @@ const codeSnippets = [
 ];
 
 const FloatingCode = ({ code, index }: { code: string; index: number }) => {
+  const { scrollY } = useScroll();
+  const y = useTransform(scrollY, [0, 500], [0, index % 2 === 0 ? -100 : -50]);
+  
   const positions = [
     { top: "10%", left: "5%" },
     { top: "20%", right: "8%" },
@@ -43,11 +47,10 @@ const FloatingCode = ({ code, index }: { code: string; index: number }) => {
   return (
     <motion.div
       className="floating-code hidden lg:block"
-      style={pos as React.CSSProperties}
+      style={{ ...pos, y } as any}
       initial={{ opacity: 0 }}
       animate={{
         opacity: [0.03, 0.08, 0.03],
-        y: [0, -30, 0],
         rotate: [-2, 2, -2],
       }}
       transition={{
@@ -63,11 +66,11 @@ const FloatingCode = ({ code, index }: { code: string; index: number }) => {
 
 const TimeBlock = ({ value, label }: { value: number; label: string }) => (
   <div className="flex flex-col items-center">
-    <div className="glass-card w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl flex items-center justify-center">
+    <SpotlightCard className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl flex items-center justify-center">
       <span className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold gradient-text">
         {value.toString().padStart(2, "0")}
       </span>
-    </div>
+    </SpotlightCard>
     <span className="mt-2 text-xs sm:text-sm text-muted-foreground uppercase tracking-wider">
       {label}
     </span>
@@ -146,64 +149,7 @@ const CountdownTimer = () => {
   );
 };
 
-const GlitchText = ({ text }: { text: string }) => {
-  return (
-    <div className="relative inline-block font-heading font-bold text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-6 group">
-      <span className="relative z-10 gradient-text">{text}</span>
-      <span className="absolute top-0 left-0 -z-10 w-full h-full text-primary opacity-0 group-hover:opacity-70 group-hover:animate-glitch-1">
-        {text}
-      </span>
-      <span className="absolute top-0 left-0 -z-10 w-full h-full text-secondary opacity-0 group-hover:opacity-70 group-hover:animate-glitch-2">
-        {text}
-      </span>
-    </div>
-  );
-};
 
-const TypewriterText = ({ text, delay = 0 }: { text: string; delay?: number }) => {
-  const [displayText, setDisplayText] = useState("");
-  const [showCursor, setShowCursor] = useState(true);
-  const [started, setStarted] = useState(false);
-
-  useEffect(() => {
-    const startTimeout = setTimeout(() => {
-      setStarted(true);
-    }, delay);
-    return () => clearTimeout(startTimeout);
-  }, [delay]);
-
-  useEffect(() => {
-    if (!started) return;
-
-    let currentIndex = 0;
-    const interval = setInterval(() => {
-      if (currentIndex <= text.length) {
-        setDisplayText(text.slice(0, currentIndex));
-        currentIndex++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 100);
-
-    return () => clearInterval(interval);
-  }, [text, started]);
-
-  useEffect(() => {
-    const cursorInterval = setInterval(() => {
-      setShowCursor((prev) => !prev);
-    }, 530);
-    return () => clearInterval(cursorInterval);
-  }, []);
-
-  return (
-    <span className="font-mono text-lg sm:text-xl md:text-2xl text-muted-foreground mb-4 block min-h-[2rem]">
-      {displayText}
-      <span className={`${showCursor ? "opacity-100" : "opacity-0"} text-primary font-bold ml-1`}>|</span>
-    </span>
-  );
-};
-
-import { useMotionValue, useSpring, useTransform } from "framer-motion";
 
 const TiltPoster = () => {
   const x = useMotionValue(0);
@@ -314,25 +260,23 @@ const HeroSection = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-8"
+              className="mb-8"
             >
-              <span className="text-sm font-medium">SRKR Coding Club Presents</span>
+              <SpotlightCard className="inline-flex items-center gap-2 px-4 py-2 rounded-full">
+                <span className="text-sm font-medium text-foreground">SRKR Coding Club Presents</span>
+              </SpotlightCard>
             </motion.div>
 
-            {/* Main Title with Glitch */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-            >
-                <div className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6">
-                    <GlitchText text="Iconcoderz" />
-                    <span className="text-muted-foreground block text-4xl sm:text-6xl mt-2">-2k26</span>
-                </div>
-            </motion.div>
+            {/* Main Title with Reveal */}
+            <div className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 overflow-hidden">
+                <RevealText text="Iconcoderz" className="gradient-text inline-block" />
+                <span className="text-muted-foreground block text-4xl sm:text-6xl mt-2">-2k26</span>
+            </div>
 
-            {/* Tagline with Typewriter */}
-            <TypewriterText text="Decode • Compete • Dominate" delay={1000} />
+            {/* Tagline with Reveal */}
+            <div className="font-mono text-lg sm:text-xl md:text-2xl text-muted-foreground mb-4 min-h-[2rem]">
+                <RevealText text="Decode • Compete • Dominate" delay={500} />
+            </div>
 
             {/* Date & Location */}
             <motion.p
@@ -362,12 +306,12 @@ const HeroSection = () => {
               className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start items-center"
             >
               {isRegistrationOpen ? (
-                <button
+                <MagneticButton
                   onClick={() => scrollToSection("#register")}
                   className="btn-hero-primary animate-pulse-glow w-full sm:w-auto"
                 >
                   Register Now
-                </button>
+                </MagneticButton>
               ) : now < registrationOpenDate ? (
                 <span className="px-8 py-4 rounded-full glass-card text-lg font-medium text-muted-foreground">
                   Registrations open 25th Jan
@@ -377,12 +321,12 @@ const HeroSection = () => {
                   Registrations Closed
                 </span>
               )}
-              <button
+              <MagneticButton
                 onClick={() => scrollToSection("#about")}
                 className="btn-hero-secondary w-full sm:w-auto"
               >
                 Learn More
-              </button>
+              </MagneticButton>
             </motion.div>
           </div>
 

@@ -6,8 +6,9 @@ import { BrowserRouter } from 'react-router-dom'
 import { QueryProvider } from './providers/QueryProvider'
 
 const savedTheme = localStorage.getItem("theme");
-if (savedTheme === "dark") {
+if (!savedTheme || savedTheme === "dark") {
   document.documentElement.classList.add("dark");
+  if (!savedTheme) localStorage.setItem("theme", "dark");
 }
 
 

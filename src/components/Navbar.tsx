@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
-import ThemeToggle from "../context/ThemeToggle";
+// import ThemeToggle from "../context/ThemeToggle";
 
 const navLinks = [
   { name: "Home", href: "#home" },
@@ -83,7 +83,7 @@ const Navbar = () => {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <ThemeToggle />
+            {/* <ThemeToggle /> */}
 
             {isRegistrationOpen ? (
               <a
