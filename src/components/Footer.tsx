@@ -2,11 +2,16 @@ import { motion } from "framer-motion";
 import { Instagram, Github, Linkedin } from "lucide-react";
 
 const quickLinks = [
-  { name: "Home", href: "#home" },
-  { name: "About", href: "#about" },
-  { name: "Rules", href: "#rules" },
-  { name: "Register", href: "#register" },
-  { name: "Contact", href: "#contact" },
+  { name: "Home", href: "/#home" },
+  { name: "About", href: "/#about" },
+  { name: "Rules", href: "/#rules" },
+  { name: "Register", href: "/#register" },
+  { name: "Contact", href: "/#contact" },
+];
+
+const resourceLinks = [
+  { name: "Documentation", href: "/docs" },
+  { name: "Sitemap", href: "/sitemap.xml" },
 ];
 
 const socialLinks = [
@@ -26,7 +31,7 @@ const Footer = () => {
   return (
     <footer className="bg-foreground text-background py-16 px-4">
       <div className="container-custom">
-        <div className="grid md:grid-cols-3 gap-12 md:gap-8">
+        <div className="grid md:grid-cols-4 gap-12 md:gap-8">
           {/* Logo & Description */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -64,9 +69,35 @@ const Footer = () => {
                   <a
                     href={link.href}
                     onClick={(e) => {
-                      e.preventDefault();
-                      scrollToSection(link.href);
+                      if (link.href.startsWith("/#") || link.href.startsWith("#")) {
+                        e.preventDefault();
+                        const id = link.href.includes("#") ? "#" + link.href.split("#")[1] : link.href;
+                        scrollToSection(id);
+                      }
                     }}
+                    className="text-background/70 hover:text-primary transition-colors"
+                  >
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Resources */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="space-y-4"
+          >
+            <h4 className="font-heading font-semibold text-lg">Resources</h4>
+            <ul className="space-y-2">
+              {resourceLinks.map((link) => (
+                <li key={link.name}>
+                  <a
+                    href={link.href}
                     className="text-background/70 hover:text-primary transition-colors"
                   >
                     {link.name}

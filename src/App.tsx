@@ -15,6 +15,17 @@ import Terms from "./pages/TermsAndConditions";
 import AdminLogin from "./admin/AdminLogin";
 import AdminRoutes from "./routes/AdminRoutes";
 
+import DocsLayout from "./layouts/DocsLayout";
+import DocIntro from "./pages/docs/DocIntro";
+import DocRunbook from "./pages/docs/DocRunbook";
+import DocArchitecture from "./pages/docs/DocArchitecture";
+import DocTerraform from "./pages/docs/DocTerraform";
+import DocDeployment from "./pages/docs/DocDeployment";
+import DocDataModel from "./pages/docs/DocDataModel";
+import DocProblemSetting from "./pages/docs/DocProblemSetting";
+import DocSupport from "./pages/docs/DocSupport";
+import DocRoadmap from "./pages/docs/DocRoadmap";
+
 const Home = () => (
   <>
     <Navbar />
@@ -42,6 +53,19 @@ const App = () => {
 
         {/* Admin Routes */}
         {AdminRoutes}
+
+        {/* Documentation Routes */}
+        <Route path="/docs" element={<DocsLayout />}>
+          <Route index element={<DocIntro />} />
+          <Route path="runbook" element={<DocRunbook />} />
+          <Route path="architecture" element={<DocArchitecture />} />
+          <Route path="terraform" element={<DocTerraform />} />
+          <Route path="deployment" element={<DocDeployment />} />
+          <Route path="data-model" element={<DocDataModel />} />
+          <Route path="problem-setting" element={<DocProblemSetting />} />
+          <Route path="support" element={<DocSupport />} />
+          <Route path="roadmap" element={<DocRoadmap />} />
+        </Route>
       </Routes>
     </div>
   );

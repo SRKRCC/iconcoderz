@@ -10,7 +10,7 @@
 **Mode:** Online  
 **Participation:** Individual Only  
 **Eligibility:** All Year Students of SRKR Engineering College  
-**Registration Fee:** ₹200/-  
+**Registration Fee:** ₹100/-  
 **Venue:** SRKR Engineering College, Bhimavaram  
 **Registration Link:** [srkrcodingclub.in](https://srkrcodingclub.in)  
 **Contact:** srkrcodingclub@gmail.com
@@ -56,7 +56,7 @@ Top performers will be recognized with exciting cash prizes and certificates, pr
 
 **Registration:** All registrations must be completed with valid college registration numbers.
 
-**Registration Fee:** ₹200 per participant, payable via UPI. Payment screenshot must be uploaded during registration.
+**Registration Fee:** ₹100 per participant, payable via UPI. Payment screenshot must be uploaded during registration.
 
 **Code of Conduct:** 
 - Plagiarism is strictly prohibited
@@ -147,7 +147,7 @@ No, Iconcoderz-2k26 is an individual competition only.
 
 <details>
 <summary>What is the registration fee?</summary>
-The registration fee is ₹200 per participant.
+The registration fee is ₹100 per participant.
 </details>
 
 <details>
