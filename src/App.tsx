@@ -26,6 +26,8 @@ import DocProblemSetting from "./pages/docs/DocProblemSetting";
 import DocSupport from "./pages/docs/DocSupport";
 import DocRoadmap from "./pages/docs/DocRoadmap";
 
+import ThreeBackground from "./components/ThreeBackground";
+
 const Home = () => (
   <>
     <Navbar />
@@ -41,7 +43,8 @@ const Home = () => (
 
 const App = () => {
   return (
-    <div className="min-h-screen bg-background scroll-smooth">
+    <div className="min-h-screen scroll-smooth relative isolate">
+      <ThreeBackground />
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Home />} />
