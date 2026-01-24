@@ -11,7 +11,7 @@ applications:
           commands:
             - pnpm build
       artifacts:
-        baseDirectory: dist
+        baseDirectory: build
         files:
           - '**/*'
       cache:
