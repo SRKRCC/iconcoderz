@@ -61,7 +61,9 @@ axiosInstance.interceptors.response.use(
         }
       }
 
-      const errorMessage = data?.message || data?.error || 'Something went wrong';
+      const errorMessage = (data?.message && data?.error) 
+        ? `${data.message}: ${data.error}` 
+        : (data?.error || data?.message || 'Something went wrong');
       return Promise.reject(new Error(errorMessage));
     }
 

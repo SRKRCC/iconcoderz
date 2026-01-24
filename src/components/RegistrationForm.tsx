@@ -333,6 +333,9 @@ const RegistrationForm = () => {
                 IC2K26-{Math.random().toString(36).substring(2, 8).toUpperCase()}
               </p>
             </div>
+            <p className="text-sm text-muted-foreground">
+              For any issues, contact <span className="text-primary font-medium">+91 85002 16667</span>
+            </p>
           </motion.div>
         </div>
       </section>
@@ -474,7 +477,7 @@ const RegistrationForm = () => {
                       <input
                         type="email"
                         className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary transition-all"
-                        placeholder="your.email@srkr.ac.in"
+                        placeholder="your.email@mail.com"
                         value={formData.email}
                         onChange={(e) => updateField("email", e.target.value)}
                       />
@@ -658,10 +661,13 @@ const RegistrationForm = () => {
                     {/* Left: QR */}
                     <div className="bg-muted rounded-xl p-6 flex flex-col items-center justify-center">
                       <p className="text-sm text-muted-foreground mb-4">Scan to Pay via UPI</p>
-                      <div className="w-48 h-48 bg-background rounded-xl flex items-center justify-center border-2 border-dashed border-border">
-                        QR Code
+                      <div className="w-48 h-48 bg-white rounded-xl flex items-center justify-center border-2 border-border overflow-hidden p-1">
+                        <img 
+                          src="/srkr-qr.webp" 
+                          alt="Payment QR Code" 
+                          className="w-full h-full object-contain rounded-lg"
+                        />
                       </div>
-                      <p className="text-xs text-muted-foreground mt-3">UPI ID: srkrcodingclub@upi</p>
                     </div>
 
                     {/* Right: Transaction ID + Screenshot */}
