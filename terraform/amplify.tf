@@ -14,7 +14,7 @@ resource "aws_amplify_app" "frontend" {
   }
 
   custom_rule {
-    source = "/<*>"
+    source = "</^[^.]+$|\\.(?!(css|gif|ico|jpg|js|png|txt|svg|woff|woff2|ttf|map|json|webp)$)([^.]+$)/>"
     target = "/index.html"
     status = "200"
   }
