@@ -17,5 +17,5 @@ resource "aws_iam_role" "amplify_role" {
 
 resource "aws_iam_role_policy_attachment" "amplify_role_policy" {
   role       = aws_iam_role.amplify_role.name
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess-Amplify"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmplifyBackendDeployFullAccess"
 }
