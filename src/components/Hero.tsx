@@ -146,6 +146,122 @@ const CountdownTimer = () => {
   );
 };
 
+const GlitchText = ({ text }: { text: string }) => {
+  return (
+    <div className="relative inline-block font-heading font-bold text-5xl sm:text-6xl md:text-7xl lg:text-8xl mb-6 group">
+      <span className="relative z-10 gradient-text">{text}</span>
+      <span className="absolute top-0 left-0 -z-10 w-full h-full text-primary opacity-0 group-hover:opacity-70 group-hover:animate-glitch-1">
+        {text}
+      </span>
+      <span className="absolute top-0 left-0 -z-10 w-full h-full text-secondary opacity-0 group-hover:opacity-70 group-hover:animate-glitch-2">
+        {text}
+      </span>
+    </div>
+  );
+};
+
+const TypewriterText = ({ text, delay = 0 }: { text: string; delay?: number }) => {
+  const [displayText, setDisplayText] = useState("");
+  const [showCursor, setShowCursor] = useState(true);
+  const [started, setStarted] = useState(false);
+
+  useEffect(() => {
+    const startTimeout = setTimeout(() => {
+      setStarted(true);
+    }, delay);
+    return () => clearTimeout(startTimeout);
+  }, [delay]);
+
+  useEffect(() => {
+    if (!started) return;
+
+    let currentIndex = 0;
+    const interval = setInterval(() => {
+      if (currentIndex <= text.length) {
+        setDisplayText(text.slice(0, currentIndex));
+        currentIndex++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [text, started]);
+
+  useEffect(() => {
+    const cursorInterval = setInterval(() => {
+      setShowCursor((prev) => !prev);
+    }, 530);
+    return () => clearInterval(cursorInterval);
+  }, []);
+
+  return (
+    <span className="font-mono text-lg sm:text-xl md:text-2xl text-muted-foreground mb-4 block min-h-[2rem]">
+      {displayText}
+      <span className={`${showCursor ? "opacity-100" : "opacity-0"} text-primary font-bold ml-1`}>|</span>
+    </span>
+  );
+};
+
+import { useMotionValue, useSpring, useTransform } from "framer-motion";
+
+const TiltPoster = () => {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseX = useSpring(x, { stiffness: 150, damping: 15 });
+  const mouseY = useSpring(y, { stiffness: 150, damping: 15 });
+
+  const rotateX = useTransform(mouseY, [-0.5, 0.5], ["15deg", "-15deg"]);
+  const rotateY = useTransform(mouseX, [-0.5, 0.5], ["-15deg", "15deg"]);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    const xPct = mouseX / width - 0.5;
+    const yPct = mouseY / height - 0.5;
+    x.set(xPct);
+    y.set(yPct);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div
+      style={{
+        rotateX,
+        rotateY,
+        transformStyle: "preserve-3d",
+      }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      initial={{ opacity: 0, x: 40, scale: 0.95 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      transition={{ duration: 0.8, delay: 1 }}
+      className="rounded-2xl p-2 glass-card w-full max-w-lg mx-auto lg:max-w-none cursor-pointer"
+    >
+      <div 
+        style={{ transform: "translateZ(50px)" }} 
+        className="rounded-xl overflow-hidden shadow-2xl"
+      >
+        <img 
+          src="/banner.webp" 
+          alt="Iconcoderz 2k26 Official Poster" 
+          className="w-full h-auto"
+        />
+        {/* Shine effect */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+      </div>
+    </motion.div>
+  );
+};
+
 const HeroSection = () => {
   const registrationOpenDate = new Date("2026-01-25T00:00:00+05:30");
   const registrationCloseDate = new Date("2026-02-12T23:59:59+05:30");
@@ -162,7 +278,7 @@ const HeroSection = () => {
   return (
     <section
       id="home"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden gradient-hero-bg"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden gradient-hero-bg perspective-1000"
     >
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
@@ -203,30 +319,20 @@ const HeroSection = () => {
               <span className="text-sm font-medium">SRKR Coding Club Presents</span>
             </motion.div>
 
-            {/* Main Title */}
-            <motion.h1
+            {/* Main Title with Glitch */}
+            <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6"
             >
-              <span className="gradient-text">Iconcoderz</span>
-              <span className="text-muted-foreground">-2k26</span>
-            </motion.h1>
+                <div className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6">
+                    <GlitchText text="Iconcoderz" />
+                    <span className="text-muted-foreground block text-4xl sm:text-6xl mt-2">-2k26</span>
+                </div>
+            </motion.div>
 
-            {/* Tagline */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="font-mono text-lg sm:text-xl md:text-2xl text-muted-foreground mb-4"
-            >
-              <span className="text-primary">Decode</span>
-              <span className="mx-3">•</span>
-              <span className="text-secondary">Compete</span>
-              <span className="mx-3">•</span>
-              <span className="text-primary">Dominate</span>
-            </motion.p>
+            {/* Tagline with Typewriter */}
+            <TypewriterText text="Decode • Compete • Dominate" delay={1000} />
 
             {/* Date & Location */}
             <motion.p
@@ -280,19 +386,8 @@ const HeroSection = () => {
             </motion.div>
           </div>
 
-          {/* Right Column - Event Poster */}
-          <motion.div
-            initial={{ opacity: 0, x: 40, scale: 0.95 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            transition={{ duration: 0.8, delay: 1 }}
-            className="rounded-2xl p-2 glass-card w-full max-w-lg mx-auto lg:max-w-none transform rotate-2 hover:rotate-0 transition-transform duration-500"
-          >
-            <img 
-              src="/banner.webp" 
-              alt="Iconcoderz 2k26 Official Poster" 
-              className="w-full h-auto rounded-xl shadow-2xl"
-            />
-          </motion.div>
+          {/* Right Column - Event Poster with 3D Tilt */}
+          <TiltPoster />
         </div>
       </div>
 
