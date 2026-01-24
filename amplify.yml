@@ -1,0 +1,19 @@
+version: 1
+applications:
+  - appRoot: client
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - corepack enable
+            - pnpm install
+        build:
+          commands:
+            - pnpm build
+      artifacts:
+        baseDirectory: dist
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - ~/.pnpm-store/**/*
