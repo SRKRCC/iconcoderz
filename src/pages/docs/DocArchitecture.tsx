@@ -1,4 +1,4 @@
-import DocMermaid from '../../components/ui/DocMermaid';
+import ArchitectureFlow from '../../components/ArchitectureFlow';
 import { 
   DocTitle, 
   DocSection, 
@@ -22,43 +22,9 @@ export default function DocArchitecture() {
       <div className="my-8 border-t border-border" />
 
       <DocSection id="overview">Architecture Overview</DocSection>
-      <DocMermaid chart={`
-flowchart TD
-    %% Styling
-    classDef user fill:#f97316,stroke:#ea580c,color:#fff,stroke-width:3px
-    classDef frontend fill:#0ea5e9,stroke:#0284c7,color:#fff
-    classDef aws fill:#ff9900,stroke:#cc7a00,color:#000
-    classDef db fill:#22c55e,stroke:#16a34a,color:#fff
-    classDef external fill:#a855f7,stroke:#9333ea,color:#fff
-    
-    User((User)):::user
-    
-    subgraph CF ["Cloudflare Pages"]
-        FE["Vite + React<br/>srkrcodingclub.in"]:::frontend
-    end
-    
-    subgraph AWS ["AWS Cloud"]
-        APIGW["API Gateway<br/>HTTPS + CORS"]:::aws
-        Lambda["Lambda<br/>Node.js • Express • Prisma"]:::aws
-        SM["Secrets Manager"]:::aws
-    end
-    
-    subgraph Storage ["Data Storage"]
-        Neon[("Neon PostgreSQL")]:::db
-        CDN["Cloudinary"]:::db
-    end
-    
-    SMTP["SMTP Service"]:::external
-    
-    User --> FE
-    FE -->|REST| APIGW
-    APIGW --> Lambda
-    Lambda --> Neon
-    Lambda --> CDN
-    Lambda -.-> SM
-    Lambda --> SMTP
-
-      `} />
+      <div className="my-8">
+        <ArchitectureFlow />
+      </div>
 
       <DocSection id="components">Components</DocSection>
       
