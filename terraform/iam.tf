@@ -1,5 +1,5 @@
 resource "aws_iam_role" "amplify_role" {
-  name = "amplify_codevoid_frontend_role"
+  name = "iconcoderz"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
