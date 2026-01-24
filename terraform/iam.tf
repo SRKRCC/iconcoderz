@@ -1,0 +1,24 @@
+resource "aws_iam_role" "amplify_role" {
+  name = "iconcoderz-amplify-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Principal = {
+          Service = [
+            "amplify.amazonaws.com",
+            "amplify.ap-south-1.amazonaws.com"
+          ]
+        }
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "amplify_role_policy" {
+  role       = aws_iam_role.amplify_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess-Amplify"
+}
