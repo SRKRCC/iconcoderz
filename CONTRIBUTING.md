@@ -4,7 +4,7 @@ First off, thanks for taking the time to contribute!
 
 ## Getting Started
 
-To get your local development environment set up, please read our [Getting Started Guide](/docs/getting-started) on the documentation site. It covers:
+To get your local development environment set up, please read our [Getting Started Guide](https://iconcoderz.srkrcodingclub.in/docs/getting-started) on the documentation site. It covers:
 
 - Installing Node.js, pnpm, and Docker
 - Setting up Environment Variables
@@ -14,7 +14,7 @@ To get your local development environment set up, please read our [Getting Start
 
 1.  **Fork the repository** (if you are an external contributor) or Create a Branch.
 2.  **Pull Request**: Open a PR to the `main` branch.
-3.  **CI Checks**: Ensure all checks pass (Linting, Tests). See our [CI/CD Guide](/docs/cicd) for details on the pipeline.
+3.  **CI Checks**: Ensure all checks pass (Linting, Tests). See our [CI/CD Guide](https://iconcoderz.srkrcodingclub.in/docs/cicd) for details on the pipeline.
 
 ## Reporting Bugs
 
