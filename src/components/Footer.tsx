@@ -12,6 +12,7 @@ const quickLinks = [
 const resourceLinks = [
   { name: "Documentation", href: "/docs" },
   { name: "Sitemap", href: "/sitemap.xml" },
+  { name: "GitHub", href: "https://github.com/SRKRCC/Iconcoderz" },
 ];
 
 const socialLinks = [

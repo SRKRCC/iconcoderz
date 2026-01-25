@@ -56,7 +56,11 @@ const Navbar = () => {
             className="flex items-center gap-2 group"
           >
             <div className="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center overflow-hidden">
-              <img src="/logo.png" alt="IconCoderz Logo" className="w-full h-full object-cover" />
+              <img
+                src="/logo.png"
+                alt="IconCoderz Logo"
+                className="w-full h-full object-cover"
+              />
             </div>
             <span className="font-heading font-bold text-xl hidden sm:block">
               <span className="gradient-text">Iconcoderz</span>

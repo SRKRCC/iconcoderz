@@ -8,9 +8,16 @@ resource "aws_amplify_app" "frontend" {
   iam_service_role_arn = aws_iam_role.amplify_role.arn
 
   build_spec = file("${path.module}/../amplify.yml")
+  
 
   environment_variables = {
     VITE_API_BASE_URL = var.api_url
+  }
+
+  custom_rule {
+    source = "/<*>"
+    target = "/index.html"
+    status = "200"
   }
 
 }

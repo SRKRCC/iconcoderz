@@ -24,15 +24,16 @@ export default function DocIntro() {
         This Wiki contains operational guides, technical architecture, deployment procedures, and institutional knowledge for organizing and maintaining the event.
       </DocParagraph>
       
-      <DocSection id="quick-links">Quick Links</DocSection>
       <DocList>
-        <DocListItem><Link to="/docs/runbook" className="text-primary hover:underline">Event Runbook</Link> – Timeline and checklist for contest day</DocListItem>
-        <DocListItem><Link to="/docs/architecture" className="text-primary hover:underline">System Architecture</Link> – High-level tech overview</DocListItem>
-        <DocListItem><Link to="/docs/deployment" className="text-primary hover:underline">Deployment Guide</Link> – How to set up and deploy</DocListItem>
-        <DocListItem><Link to="/docs/data-model" className="text-primary hover:underline">Data Model & APIs</Link> – Database schema and backend endpoints</DocListItem>
-        <DocListItem><Link to="/docs/problem-setting" className="text-primary hover:underline">Problem Setting & Judging</Link> – How to create and run contests</DocListItem>
-        <DocListItem><Link to="/docs/support" className="text-primary hover:underline">Support SOP</Link> – Common issues and solutions</DocListItem>
-        <DocListItem><Link to="/docs/roadmap" className="text-primary hover:underline">Retrospective & Roadmap</Link> – Post-event analysis and future plans</DocListItem>
+        <DocListItem><Link to="/docs/architecture" className="text-primary hover:underline">System Architecture</Link> – High-level tech overview.</DocListItem>
+        <DocListItem><Link to="/docs/data-model" className="text-primary hover:underline">Data Model & APIs</Link> – Database schema and backend endpoints.</DocListItem>
+        <DocListItem><Link to="/docs/terraform" className="text-primary hover:underline">Terraform Setup</Link> – Infrastructure as Code.</DocListItem>
+        <DocListItem><Link to="/docs/deployment" className="text-primary hover:underline">Deployment Guide</Link> – Manual operations & troubleshooting.</DocListItem>
+        <DocListItem><Link to="/docs/custom-domain" className="text-primary hover:underline">Custom Domain</Link> – ACM & Cloudflare setup.</DocListItem>
+        <DocListItem><Link to="/docs/cicd" className="text-primary hover:underline">CI/CD Pipeline</Link> – How our "Assembly Line" works.</DocListItem>
+        <DocListItem><Link to="/docs/getting-started" className="text-primary hover:underline">Getting Started</Link> – <strong>Start here!</strong> Local setup guide.</DocListItem>
+        <DocListItem><Link to="/docs/testing" className="text-primary hover:underline">Testing & Makefile</Link> – How to run tests and commands.</DocListItem>
+        <DocListItem><Link to="/docs/runbook" className="text-primary hover:underline">Event Runbook</Link> – Timeline and checklist for contest day.</DocListItem>
       </DocList>
 
       <div className="my-8 border-t border-border" />
@@ -83,8 +84,9 @@ export default function DocIntro() {
       <DocSection id="for-new-team-members">For New Team Members</DocSection>
       <DocList type="ol">
         <DocListItem>Read the <strong>System Architecture</strong> page to understand the stack.</DocListItem>
-        <DocListItem>Review the <strong>Deployment Guide</strong> to see how everything is set up.</DocListItem>
-        <DocListItem>Check the <strong>Support SOP</strong> for common issues.</DocListItem>
+        <DocListItem>Check out <strong>Data Model</strong> and <strong>CI/CD Pipeline</strong>.</DocListItem>
+        <DocListItem><strong>Then:</strong> Read the <Link to="/docs/getting-started" className="text-primary hover:underline">Getting Started</Link> guide to set up your laptop.</DocListItem>
+        <DocListItem>Review the <strong>Support SOP</strong> for common issues.</DocListItem>
         <DocListItem>On contest day, follow the <strong>Event Runbook</strong>.</DocListItem>
       </DocList>
 

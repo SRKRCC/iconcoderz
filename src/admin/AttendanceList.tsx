@@ -43,7 +43,7 @@ const AttendanceList: React.FC = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await api.get('/attendance/list', {
+      const response = await api.get<{ data: User[]; pagination: PaginationData }>('/attendance/list', {
         params: {
           page: pagination.page,
           limit: pagination.limit,
@@ -53,8 +53,10 @@ const AttendanceList: React.FC = () => {
           sortOrder,
         },
       });
-      setUsers(response.data.data);
-      setPagination(response.data.pagination);
+      setUsers(response.data?.data || []);
+      if (response.data?.pagination) {
+        setPagination(response.data.pagination);
+      }
     } catch (err) {
       console.error('Failed to fetch users:', err);
     } finally {

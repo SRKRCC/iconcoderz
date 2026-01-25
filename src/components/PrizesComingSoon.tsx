@@ -99,7 +99,9 @@ const PrizesSection = () => {
                   <h3 className="font-heading text-2xl font-bold text-foreground">
                     {category.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground">{category.subtitle}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {category.subtitle}
+                  </p>
                 </div>
               </div>
 
@@ -109,9 +111,13 @@ const PrizesSection = () => {
                     key={prize}
                     className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 border border-border"
                   >
-                    <Award className={`w-5 h-5 ${prizeIdx === 0 ? 'text-yellow-500' : 'text-gray-400'}`} />
+                    <Award
+                      className={`w-5 h-5 ${prizeIdx === 0 ? "text-yellow-500" : "text-gray-400"}`}
+                    />
                     <span className="font-medium text-foreground">{prize}</span>
-                    <span className="ml-auto text-sm text-muted-foreground">TBA</span>
+                    <span className="ml-auto text-sm text-muted-foreground">
+                      TBA
+                    </span>
                   </div>
                 ))}
               </div>

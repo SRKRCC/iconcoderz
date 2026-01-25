@@ -59,8 +59,8 @@ const Attendance: React.FC = () => {
 
   const fetchStats = async () => {
     try {
-      const response = await api.get('/attendance/stats');
-      setStats(response.data);
+      const response = await api.get<Stats>('/attendance/stats');
+      setStats(response.data || null);
     } catch (err) {
       console.error('Failed to fetch stats:', err);
     }
@@ -68,8 +68,8 @@ const Attendance: React.FC = () => {
 
   const fetchRecentScans = async () => {
     try {
-      const response = await api.get('/attendance/recent?limit=5');
-      setRecentScans(response.data);
+      const response = await api.get<RecentScan[]>('/attendance/recent?limit=5');
+      setRecentScans(response.data || []);
     } catch (err) {
       console.error('Failed to fetch recent scans:', err);
     }
@@ -150,8 +150,8 @@ const Attendance: React.FC = () => {
       setLoading(true);
       setError('');
       
-      const response = await api.post('/attendance/scan', { qrData });
-      setScanResult(response.data);
+      const response = await api.post<ScanResult>('/attendance/scan', { qrData });
+      setScanResult(response.data || null);
       await fetchStats();
       await fetchRecentScans();
 
@@ -185,8 +185,8 @@ const Attendance: React.FC = () => {
         return;
       }
 
-      const response = await api.post('/attendance/manual', payload);
-      setScanResult(response.data);
+      const response = await api.post<ScanResult>('/attendance/manual', payload);
+      setScanResult(response.data || null);
       setManualInput('');
       await fetchStats();
       await fetchRecentScans();

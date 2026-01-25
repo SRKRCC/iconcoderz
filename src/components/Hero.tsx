@@ -1,7 +1,17 @@
 import { useState, useEffect } from "react";
-import { motion, useScroll, useTransform, useMotionValue, useSpring } from "framer-motion";
+import {
+  motion,
+  useScroll,
+  useTransform,
+  useMotionValue,
+  useSpring,
+} from "framer-motion";
 import { ChevronDown } from "lucide-react";
-import { MagneticButton, RevealText, SpotlightCard } from "./ui/MotionComponents";
+import {
+  MagneticButton,
+  RevealText,
+  SpotlightCard,
+} from "./ui/MotionComponents";
 
 const codeSnippets = [
   "function solve(n) {",
@@ -28,7 +38,7 @@ const codeSnippets = [
 const FloatingCode = ({ code, index }: { code: string; index: number }) => {
   const { scrollY } = useScroll();
   const y = useTransform(scrollY, [0, 500], [0, index % 2 === 0 ? -100 : -50]);
-  
+
   const positions = [
     { top: "10%", left: "5%" },
     { top: "20%", right: "8%" },
@@ -47,6 +57,7 @@ const FloatingCode = ({ code, index }: { code: string; index: number }) => {
   return (
     <motion.div
       className="floating-code hidden lg:block"
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       style={{ ...pos, y } as any}
       initial={{ opacity: 0 }}
       animate={{
@@ -84,7 +95,7 @@ const CountdownTimer = () => {
     minutes: 0,
     seconds: 0,
   });
-  const [stage, setStage] = useState<'UPCOMING' | 'LIVE' | 'ENDED'>('UPCOMING');
+  const [stage, setStage] = useState<"UPCOMING" | "LIVE" | "ENDED">("UPCOMING");
 
   useEffect(() => {
     // Event Format: Feb 23, 2026, 1:30 PM (Starts) - 4:30 PM (Ends)
@@ -94,23 +105,25 @@ const CountdownTimer = () => {
     const updateTimer = () => {
       const now = new Date().getTime();
       let targetDate = startTime;
-      let currentStage: 'UPCOMING' | 'LIVE' | 'ENDED' = 'UPCOMING';
+      let currentStage: "UPCOMING" | "LIVE" | "ENDED" = "UPCOMING";
 
       if (now >= endTime) {
-        currentStage = 'ENDED';
+        currentStage = "ENDED";
       } else if (now >= startTime) {
-        currentStage = 'LIVE';
+        currentStage = "LIVE";
         targetDate = endTime;
       }
 
       setStage(currentStage);
 
-      if (currentStage !== 'ENDED') {
+      if (currentStage !== "ENDED") {
         const difference = targetDate - now;
         if (difference > 0) {
           setTimeLeft({
             days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-            hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+            hours: Math.floor(
+              (difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+            ),
             minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
             seconds: Math.floor((difference % (1000 * 60)) / 1000),
           });
@@ -125,11 +138,15 @@ const CountdownTimer = () => {
     return () => clearInterval(interval);
   }, []);
 
-  if (stage === 'ENDED') {
+  if (stage === "ENDED") {
     return (
       <div className="glass-card px-8 py-6 rounded-2xl text-center">
-        <h3 className="font-heading text-2xl font-bold gradient-text mb-2">Competition Ended</h3>
-        <p className="text-muted-foreground">Looking forward to seeing you next year!</p>
+        <h3 className="font-heading text-2xl font-bold gradient-text mb-2">
+          Competition Ended
+        </h3>
+        <p className="text-muted-foreground">
+          Looking forward to seeing you next year!
+        </p>
       </div>
     );
   }
@@ -143,13 +160,11 @@ const CountdownTimer = () => {
         <TimeBlock value={timeLeft.seconds} label="Secs" />
       </div>
       <div className="uppercase tracking-widest text-sm font-medium animate-pulse text-primary">
-        {stage === 'LIVE' ? 'Competition Ends In' : 'Competition Starts In'}
+        {stage === "LIVE" ? "Competition Ends In" : "Competition Starts In"}
       </div>
     </div>
   );
 };
-
-
 
 const TiltPoster = () => {
   const x = useMotionValue(0);
@@ -192,13 +207,13 @@ const TiltPoster = () => {
       transition={{ duration: 0.8, delay: 1 }}
       className="rounded-2xl p-2 glass-card w-full max-w-lg mx-auto lg:max-w-none cursor-pointer"
     >
-      <div 
-        style={{ transform: "translateZ(50px)" }} 
+      <div
+        style={{ transform: "translateZ(50px)" }}
         className="rounded-xl overflow-hidden shadow-2xl"
       >
-        <img 
-          src="/banner.webp" 
-          alt="Iconcoderz 2k26 Official Poster" 
+        <img
+          src="/banner.webp"
+          alt="Iconcoderz 2k26 Official Poster"
           className="w-full h-auto"
         />
         {/* Shine effect */}
@@ -212,7 +227,8 @@ const HeroSection = () => {
   const registrationOpenDate = new Date("2026-01-25T00:00:00+05:30");
   const registrationCloseDate = new Date("2026-02-12T23:59:59+05:30");
   const now = new Date();
-  const isRegistrationOpen = now >= registrationOpenDate && now <= registrationCloseDate;
+  const isRegistrationOpen =
+    now >= registrationOpenDate && now <= registrationCloseDate;
 
   const scrollToSection = (href: string) => {
     const element = document.querySelector(href);
@@ -231,7 +247,7 @@ const HeroSection = () => {
         {codeSnippets.slice(0, 10).map((code, index) => (
           <FloatingCode key={index} code={code} index={index} />
         ))}
-        
+
         {/* Gradient orbs */}
         <motion.div
           className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-primary/10 blur-3xl"
@@ -263,19 +279,26 @@ const HeroSection = () => {
               className="mb-8"
             >
               <SpotlightCard className="inline-flex items-center gap-2 px-4 py-2 rounded-full">
-                <span className="text-sm font-medium text-foreground">SRKR Coding Club Presents</span>
+                <span className="text-sm font-medium text-foreground">
+                  SRKR Coding Club Presents
+                </span>
               </SpotlightCard>
             </motion.div>
 
             {/* Main Title with Reveal */}
             <div className="font-heading text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-6 overflow-hidden">
-                <RevealText text="Iconcoderz" className="gradient-text inline-block" />
-                <span className="text-muted-foreground block text-4xl sm:text-6xl mt-2">-2k26</span>
+              <RevealText
+                text="Iconcoderz"
+                className="gradient-text inline-block"
+              />
+              <span className="text-muted-foreground inline-block text-4xl sm:text-6xl ml-2">
+                -2k26
+              </span>
             </div>
 
             {/* Tagline with Reveal */}
             <div className="font-mono text-lg sm:text-xl md:text-2xl text-muted-foreground mb-4 min-h-[2rem]">
-                <RevealText text="Decode • Compete • Dominate" delay={500} />
+              <RevealText text="Decode • Compete • Dominate" delay={500} />
             </div>
 
             {/* Date & Location */}
@@ -285,7 +308,8 @@ const HeroSection = () => {
               transition={{ duration: 0.6, delay: 0.5 }}
               className="text-base sm:text-lg text-muted-foreground mb-10"
             >
-              February 23, 2026 • 1:30 PM IST • SRKR Engineering College, Bhimavaram
+              February 23, 2026 • 1:30 PM IST • SRKR Engineering College,
+              Bhimavaram
             </motion.p>
 
             {/* Countdown Timer */}

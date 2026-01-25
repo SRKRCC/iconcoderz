@@ -73,7 +73,6 @@ const PrivacyPolicy = () => {
   return (
     <section className="section-padding">
       <div className="container-custom">
-
         {/* Top Bar */}
         <div className="flex items-center justify-between mb-12">
           {/* Back Button */}
@@ -130,7 +129,6 @@ const PrivacyPolicy = () => {
             © {new Date().getFullYear()} Iconcoderz 2K26. All rights reserved.
           </p>
         </div>
-
       </div>
     </section>
   );

@@ -7,8 +7,7 @@ import {
   DocTable,
   DocTh, 
   DocTd,
-  DocCode,
-  DocCallout
+  DocCode
 } from '../../components/ui/DocComponents';
 
 export default function DocDataModel() {
@@ -38,19 +37,20 @@ export default function DocDataModel() {
         </thead>
         <tbody>
           <tr><DocTd>id</DocTd><DocTd><DocCode>String (CUID)</DocCode></DocTd><DocTd>Primary Key</DocTd></tr>
+          <tr><DocTd>registrationCode</DocTd><DocTd><DocCode>String</DocCode></DocTd><DocTd>Unique (IC2K26-XXXXXX)</DocTd></tr>
+          <tr><DocTd>registrationNumber</DocTd><DocTd><DocCode>String</DocCode></DocTd><DocTd>Unique (10-digit college ID)</DocTd></tr>
           <tr><DocTd>email</DocTd><DocTd><DocCode>String</DocCode></DocTd><DocTd>Unique</DocTd></tr>
-          <tr><DocTd>fullName</DocTd><DocTd><DocCode>String</DocCode></DocTd><DocTd>Full name of the Participant</DocTd></tr>
-          <tr><DocTd>regNo</DocTd><DocTd><DocCode>String</DocCode></DocTd><DocTd>Unique (College Roll)</DocTd></tr>
-          <tr><DocTd>phone</DocTd><DocTd><DocCode>String</DocCode></DocTd><DocTd>Phone Number of the Participant</DocTd></tr>
-          <tr><DocTd>gender</DocTd><DocTd><DocCode>Enum</DocCode></DocTd><DocTd>MALE, FEMALE, PREFER_NOT_TO_SAY</DocTd></tr>
-          <tr><DocTd>year</DocTd><DocTd><DocCode>Enum</DocCode></DocTd><DocTd>FIRST_YEAR, SECOND_YEAR, THIRD_YEAR, FOURTH_YEAR</DocTd></tr>
-          <tr><DocTd>branch</DocTd><DocTd><DocCode>Enum</DocCode></DocTd><DocTd>CSE, IT, ECE, EEE, MECH, CIVIL, AIDS, AIML, CSBS</DocTd></tr>
-          <tr><DocTd>section</DocTd><DocTd><DocCode>String?</DocCode></DocTd><DocTd>Optional</DocTd></tr>
-          <tr><DocTd>hackerrankHandle</DocTd><DocTd><DocCode>String</DocCode></DocTd><DocTd>For leaderboard tracking</DocTd></tr>
+          <tr><DocTd>fullName</DocTd><DocTd><DocCode>String</DocCode></DocTd><DocTd>Participant Name</DocTd></tr>
+          <tr><DocTd>phone</DocTd><DocTd><DocCode>String</DocCode></DocTd><DocTd>Unique</DocTd></tr>
+          <tr><DocTd>gender</DocTd><DocTd><DocCode>Enum</DocCode></DocTd><DocTd>MALE, FEMALE, OTHER, PREFER_NOT_TO_SAY</DocTd></tr>
+          <tr><DocTd>yearOfStudy</DocTd><DocTd><DocCode>Enum</DocCode></DocTd><DocTd>FIRST_YEAR to FOURTH_YEAR</DocTd></tr>
+          <tr><DocTd>branch</DocTd><DocTd><DocCode>Enum</DocCode></DocTd><DocTd>CSE, CSBS, IT, ECE, EEE, etc.</DocTd></tr>
+          <tr><DocTd>handles</DocTd><DocTd><DocCode>String?</DocCode></DocTd><DocTd>CodeChef, LeetCode, Codeforces (Separate fields)</DocTd></tr>
           <tr><DocTd>transactionId</DocTd><DocTd><DocCode>String</DocCode></DocTd><DocTd>Unique payment ref</DocTd></tr>
           <tr><DocTd>screenshotUrl</DocTd><DocTd><DocCode>String</DocCode></DocTd><DocTd>Cloudinary URL</DocTd></tr>
           <tr><DocTd>paymentStatus</DocTd><DocTd><DocCode>Enum</DocCode></DocTd><DocTd>PENDING, VERIFIED, REJECTED</DocTd></tr>
-          <tr><DocTd>createdAt</DocTd><DocTd><DocCode>DateTime</DocCode></DocTd><DocTd>Auto-generated</DocTd></tr>
+          <tr><DocTd>attended</DocTd><DocTd><DocCode>Boolean</DocCode></DocTd><DocTd>Default: false</DocTd></tr>
+          <tr><DocTd>searchVector</DocTd><DocTd><DocCode>tsvector</DocCode></DocTd><DocTd>For full-text search</DocTd></tr>
         </tbody>
       </DocTable>
 
@@ -60,14 +60,28 @@ export default function DocDataModel() {
           <tr>
             <DocTh>Field</DocTh>
             <DocTh>Type</DocTh>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><DocTd>id</DocTd><DocTd><DocCode>String</DocCode></DocTd></tr>
+          <tr><DocTd>email</DocTd><DocTd><DocCode>String</DocCode></DocTd></tr>
+          <tr><DocTd>name</DocTd><DocTd><DocCode>String</DocCode></DocTd></tr>
+          <tr><DocTd>password</DocTd><DocTd><DocCode>String (Hash)</DocCode></DocTd></tr>
+        </tbody>
+      </DocTable>
+
+      <h3 className="text-xl font-heading font-semibold mt-8 mb-4">AttendanceLog Model</h3>
+      <DocTable>
+        <thead>
+          <tr>
+            <DocTh>Field</DocTh>
             <DocTh>Notes</DocTh>
           </tr>
         </thead>
         <tbody>
-          <tr><DocTd>id</DocTd><DocTd><DocCode>String (CUID)</DocCode></DocTd><DocTd>Primary Key</DocTd></tr>
-          <tr><DocTd>username</DocTd><DocTd><DocCode>String</DocCode></DocTd><DocTd>Unique</DocTd></tr>
-          <tr><DocTd>passwordHash</DocTd><DocTd><DocCode>String</DocCode></DocTd><DocTd>Bcrypt hash</DocTd></tr>
-          <tr><DocTd>role</DocTd><DocTd><DocCode>String</DocCode></DocTd><DocTd>Default: "SUPERADMIN"</DocTd></tr>
+          <tr><DocTd>registrationId</DocTd><DocTd>Link to User</DocTd></tr>
+          <tr><DocTd>adminId</DocTd><DocTd>Who scanned it</DocTd></tr>
+          <tr><DocTd>scannedAt</DocTd><DocTd>Timestamp</DocTd></tr>
         </tbody>
       </DocTable>
       
@@ -76,36 +90,26 @@ export default function DocDataModel() {
 
       <h3 className="text-xl font-heading font-semibold mt-8 mb-4">Public</h3>
       <DocList>
-        <DocListItem>
-           <strong>POST /register</strong>
-           <br/><span className="text-sm opacity-80">Submit registration details + payment info.</span>
-        </DocListItem>
-        <DocListItem>
-           <strong>GET /health</strong>
-           <br/><span className="text-sm opacity-80">Check system status (DB connection, etc).</span>
-        </DocListItem>
+        <DocListItem><strong>POST /register</strong> - Register new user.</DocListItem>
+        <DocListItem><strong>GET /health</strong> - Health check.</DocListItem>
+        <DocListItem><strong>GET /admin/login</strong> - Admin login (POST).</DocListItem>
       </DocList>
 
       <h3 className="text-xl font-heading font-semibold mt-8 mb-4">Admin (Protected)</h3>
-      <DocCallout type="warning">Requires <DocCode>Authorization: Bearer &lt;token&gt;</DocCode> header.</DocCallout>
-      
       <DocList>
-        <DocListItem>
-           <strong>POST /admin/login</strong>
-           <br/><span className="text-sm opacity-80">Login to get JWT access token.</span>
-        </DocListItem>
-        <DocListItem>
-           <strong>GET /admin/registrations</strong>
-           <br/><span className="text-sm opacity-80">List all registrations with filtering/pagination.</span>
-        </DocListItem>
-        <DocListItem>
-           <strong>GET /admin/stats</strong>
-           <br/><span className="text-sm opacity-80">Get aggregate statistics (total count, payment breakdown).</span>
-        </DocListItem>
-        <DocListItem>
-           <strong>PATCH /admin/registrations/:id/status</strong>
-           <br/><span className="text-sm opacity-80">Update payment status (VERIFIED/REJECTED). Triggers email.</span>
-        </DocListItem>
+        <DocListItem><strong>GET /admin/users</strong> - List all users.</DocListItem>
+        <DocListItem><strong>GET /admin/users/:id</strong> - Get single user details.</DocListItem>
+        <DocListItem><strong>PATCH /admin/users/:id/payment-status</strong> - Verify/Reject payment.</DocListItem>
+        <DocListItem><strong>GET /admin/dashboard/stats</strong> - Aggregate stats.</DocListItem>
+      </DocList>
+
+      <h3 className="text-xl font-heading font-semibold mt-8 mb-4">Attendance (Protected)</h3>
+      <DocList>
+        <DocListItem><strong>POST /attendance/scan</strong> - Scan QR code.</DocListItem>
+        <DocListItem><strong>POST /attendance/manual</strong> - Manual entry.</DocListItem>
+        <DocListItem><strong>GET /attendance/stats</strong> - Attendance stats.</DocListItem>
+        <DocListItem><strong>GET /attendance/recent</strong> - Recent logs.</DocListItem>
+        <DocListItem><strong>GET /attendance/list</strong> - Full list.</DocListItem>
       </DocList>
 
       <DocParagraph>

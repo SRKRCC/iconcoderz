@@ -38,37 +38,8 @@ export default function DocDeployment() {
 
       <DocSection id="ci-cd-pipeline">CI/CD Pipeline</DocSection>
       <DocParagraph>
-        We use <strong>GitHub Actions</strong> for continuous integration and deployment.
+        We use <strong>GitHub Actions</strong> for automation. For a detailed explanation of the "Robot Assembly Line" and our build/test/deploy flows, please see the <strong className="text-primary hover:underline"><a href="/docs/cicd">CI/CD Automation Guide</a></strong>.
       </DocParagraph>
-
-      <DocSubSection id="frontend-pipeline">Frontend Pipeline</DocSubSection>
-      <DocList>
-        <DocListItem><strong>Trigger:</strong> Push to <DocCode>main</DocCode> (client folder changes).</DocListItem>
-        <DocListItem><strong>File:</strong> <DocCode>client/.github/workflows/deploy.yml</DocCode></DocListItem>
-        <DocListItem><strong>Steps:</strong>
-          <DocList type="ol">
-             <DocListItem>Checkout code.</DocListItem>
-             <DocListItem>Install dependencies (<DocCode>npm install</DocCode>).</DocListItem>
-             <DocListItem>Build (<DocCode>npm run build</DocCode>).</DocListItem>
-             <DocListItem>Deploy to Cloudflare Pages (via wrangler action).</DocListItem>
-          </DocList>
-        </DocListItem>
-      </DocList>
-
-      <DocSubSection id="backend-pipeline">Backend Pipeline</DocSubSection>
-      <DocList>
-        <DocListItem><strong>Trigger:</strong> Push to <DocCode>main</DocCode> (server folder changes).</DocListItem>
-        <DocListItem><strong>File:</strong> <DocCode>server/.github/workflows/deploy-prod.yml</DocCode></DocListItem>
-        <DocListItem><strong>Steps:</strong>
-          <DocList type="ol">
-             <DocListItem>Configure AWS Credentials (OIDC).</DocListItem>
-             <DocListItem>Login to Amazon ECR.</DocListItem>
-             <DocListItem>Build Docker image for Lambda.</DocListItem>
-             <DocListItem>Push image to ECR.</DocListItem>
-             <DocListItem>Update Lambda function code to use new image.</DocListItem>
-          </DocList>
-        </DocListItem>
-      </DocList>
 
       <DocSection id="terraform-setup">Terraform Setup (Infrastructure)</DocSection>
       <DocParagraph>
@@ -77,7 +48,7 @@ export default function DocDeployment() {
 
       <DocSubSection id="managed-resources">Managed Resources</DocSubSection>
       <DocList>
-         <DocListItem><strong>AWS Lambda:</strong> The backend API function.</DocListItem>
+         <DocListItem><strong>AWS Lambda:</strong> The backend API function (<DocCode>iconcoderz-prod</DocCode>).</DocListItem>
          <DocListItem><strong>API Gateway (HTTP API):</strong> Routes requests to Lambda.</DocListItem>
          <DocListItem><strong>ECR Repository:</strong> Stores docker images.</DocListItem>
          <DocListItem><strong>Secrets Manager:</strong> Stores <DocCode>DATABASE_URL</DocCode>, <DocCode>SMTP_PASS</DocCode>, etc.</DocListItem>
@@ -87,30 +58,52 @@ export default function DocDeployment() {
       <DocSubSection id="manual-commands">Manual Commands</DocSubSection>
       <div className="my-6 rounded-lg border border-border bg-muted p-4 overflow-x-auto font-mono text-sm">
         <div className="text-muted-foreground"># Initialize Terraform</div>
-        <div className="text-foreground">terraform init</div>
+        <div className="text-foreground">terraform init -reconfigure</div>
         <br/>
         <div className="text-muted-foreground"># Plan changes</div>
         <div className="text-foreground">terraform plan</div>
         <br/>
-        <div className="text-muted-foreground"># Apply changes (Be careful!)</div>
-        <div className="text-foreground">terraform apply</div>
+        <div className="text-muted-foreground"># Apply changes</div>
+        <div className="text-foreground">terraform apply -auto-approve</div>
       </div>
 
       <DocSection id="secrets-management">Secrets Management</DocSection>
+      <DocCallout type="tip">
+        <strong>Analogy: The Bank Vault.</strong><br/>
+        You don't carry your life savings in your pocket (code). You keep them in a vault (Secrets Manager). When you need money, you go to the bank, authenticate yourself, and take only what you need.
+      </DocCallout>
       <DocParagraph>
-        Secrets (Database URL, API Keys) are injected into the Lambda function at runtime via <strong>AWS Secrets Manager</strong>.
+        Secrets are injected via <strong>AWS Secrets Manager</strong>. The application config fetches them at runtime (in production).
       </DocParagraph>
       <DocList>
-         <DocListItem><strong>Secret Name:</strong> <DocCode>iconcoderz/prod/env</DocCode></DocListItem>
-         <DocListItem><strong>Key Format:</strong> JSON key-value pairs.</DocListItem>
+         <DocListItem><strong>DB URL:</strong> <DocCode>iconcoderz/prod/db-url</DocCode></DocListItem>
+         <DocListItem><strong>External Services:</strong>
+            <DocList>
+               <DocListItem><DocCode>iconcoderz/prod/cloudinary-api</DocCode></DocListItem>
+               <DocListItem><DocCode>iconcoderz/prod/smtp-credentials</DocCode></DocListItem>
+            </DocList>
+         </DocListItem>
+          <DocListItem><strong>App Config:</strong>
+            <DocList>
+               <DocListItem><DocCode>iconcoderz/prod/jwt-config</DocCode></DocListItem>
+               <DocListItem><DocCode>iconcoderz/prod/client-config</DocCode></DocListItem>
+               <DocListItem><DocCode>iconcoderz/prod/qr-config</DocCode></DocListItem>
+            </DocList>
+         </DocListItem>
       </DocList>
+      
+      <DocSubSection id="docker-images">Docker Images & ECR</DocSubSection>
+      <DocCallout type="tip">
+        <strong>Analogy: The Lunchbox.</strong><br/>
+        A Docker image is like a packed lunchbox. It has the food (code), the fork (runtime), and the napkin (dependencies). You can take this lunchbox to school (AWS), the park (Localhost), or work (Test Server), and your lunch is exactly the same everywhere.
+      </DocCallout>
       
       <DocParagraph>To update secrets:</DocParagraph>
       <DocList type="ol">
          <DocListItem>Go to AWS Console → Secrets Manager.</DocListItem>
-         <DocListItem>Select the secret.</DocListItem>
+         <DocListItem>Select the secret path.</DocListItem>
          <DocListItem>Click "Retrieve secret value" → "Edit".</DocListItem>
-         <DocListItem>Add/Update JSON keys.</DocListItem>
+         <DocListItem>Update JSON keys.</DocListItem>
       </DocList>
 
       <DocSection id="troubleshooting">Troubleshooting Deployment</DocSection>
@@ -123,16 +116,16 @@ export default function DocDeployment() {
         </thead>
         <tbody>
           <tr>
-            <DocTd>GitHub Action fails on "AWS Credentials"</DocTd>
-            <DocTd>Check GitHub Repository Secrets (AWS_ROLE_ARN) and OIDC trust policy in IAM.</DocTd>
+            <DocTd>Lambda Image Format Error</DocTd>
+            <DocTd>Ensure <DocCode>provenance: false</DocCode> is in Docker build step (Lambda doesn't support OCI manifests).</DocTd>
           </tr>
           <tr>
-            <DocTd>Cloudflare build fails</DocTd>
-            <DocTd>Check <DocCode>npm run build</DocCode> locally. Ensure node version matches (v20+).</DocTd>
+            <DocTd>Health Check Failed</DocTd>
+            <DocTd>Check if <DocCode>DATABASE_URL</DocCode> secret is correct. Check CloudWatch logs for startup errors.</DocTd>
           </tr>
           <tr>
-            <DocTd>Lambda shows "Internal Server Error"</DocTd>
-            <DocTd>Check CloudWatch Logs. Likely a DB connection issue or missing secret.</DocTd>
+            <DocTd>Terraform Output Mismatch</DocTd>
+            <DocTd>Verify output names in <DocCode>main.tf</DocCode> match what workflow expects (e.g. <DocCode>api_url</DocCode>).</DocTd>
           </tr>
         </tbody>
       </DocTable>

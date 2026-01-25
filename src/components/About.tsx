@@ -74,18 +74,23 @@ const AboutSection = () => {
             </h2>
 
             <p className="text-lg sm:text-lg md:text-xl text-muted-foreground leading-relaxed">
-              <span className="font-semibold text-foreground">Iconcoderz-2k26</span> is a 
-              single-round, online competitive programming contest exclusively for SRKR 
-              Engineering College students. Whether you're a 1st, 2nd, 3rd or 4th year student, 
-              this is your chance to test your Data Structures and Algorithms skills against 
-              your peers.
+              <span className="font-semibold text-foreground">
+                Iconcoderz-2k26
+              </span>{" "}
+              is a single-round, online competitive programming contest
+              exclusively for SRKR Engineering College students. Whether you're
+              a 1st, 2nd, 3rd or 4th year student, this is your chance to test
+              your Data Structures and Algorithms skills against your peers.
             </p>
 
             <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground leading-relaxed">
-              Organized by the <span className="text-primary font-semibold">SRKR Coding Club</span>, 
-              this event aims to foster a culture of competitive programming on campus. 
-              Prepare yourself for challenging problems that will push your problem-solving 
-              abilities to the limit!
+              Organized by the{" "}
+              <span className="text-primary font-semibold">
+                SRKR Coding Club
+              </span>
+              , this event aims to foster a culture of competitive programming
+              on campus. Prepare yourself for challenging problems that will
+              push your problem-solving abilities to the limit!
             </p>
 
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pt-6 text-lg">
@@ -127,7 +132,6 @@ const AboutSection = () => {
         </motion.div>
       </div>
     </section>
-
   );
 };
 

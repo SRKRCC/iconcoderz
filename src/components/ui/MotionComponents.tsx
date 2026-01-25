@@ -1,8 +1,22 @@
-import { motion, useMotionTemplate, useMotionValue, useSpring, type Variants } from "framer-motion";
+import {
+  motion,
+  useMotionTemplate,
+  useMotionValue,
+  useSpring,
+  type Variants,
+} from "framer-motion";
 import { type MouseEvent, useRef } from "react";
 
 // --- Magnetic Button ---
-export const MagneticButton = ({ children, className, onClick }: { children: React.ReactNode; className?: string; onClick?: () => void }) => {
+export const MagneticButton = ({
+  children,
+  className,
+  onClick,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  onClick?: () => void;
+}) => {
   const ref = useRef<HTMLButtonElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -40,7 +54,13 @@ export const MagneticButton = ({ children, className, onClick }: { children: Rea
 
 // --- Spotlight Card ---
 // --- SpotlightCard (Theme Aware) ---
-export const SpotlightCard = ({ children, className = "" }: { children: React.ReactNode; className?: string }) => {
+export const SpotlightCard = ({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
@@ -73,9 +93,17 @@ export const SpotlightCard = ({ children, className = "" }: { children: React.Re
 };
 
 // --- Smooth Text Reveal ---
-export const RevealText = ({ text, delay = 0, className = "" }: { text: string; delay?: number; className?: string }) => {
+export const RevealText = ({
+  text,
+  delay = 0,
+  className = "",
+}: {
+  text: string;
+  delay?: number;
+  className?: string;
+}) => {
   const chars = Array.from(text);
-  
+
   const container: Variants = {
     hidden: { opacity: 0 },
     visible: {
@@ -107,15 +135,19 @@ export const RevealText = ({ text, delay = 0, className = "" }: { text: string; 
 
   return (
     <motion.div
-      style={{ display: "flex", flexWrap: "wrap" }}
+      style={{ display: "inline-flex", flexWrap: "wrap" }}
       variants={container}
       initial="hidden"
       animate="visible"
       className={className}
     >
       {chars.map((char, index) => (
-        <motion.span variants={child} key={index} style={{ marginRight: char === " " ? "0.3em" : "0" }}>
-            {char}
+        <motion.span
+          variants={child}
+          key={index}
+          style={{ marginRight: char === " " ? "0.3em" : "0" }}
+        >
+          {char}
         </motion.span>
       ))}
     </motion.div>

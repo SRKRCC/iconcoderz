@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import ThemeToggle from "../context/ThemeToggle";
 
-
 const terms = [
   {
     title: "Eligibility",
@@ -53,7 +52,6 @@ const TermsAndConditions = () => {
   return (
     <section className="section-padding">
       <div className="container-custom">
-
         {/* Top Bar */}
         <div className="flex items-center justify-between mb-12">
           <button

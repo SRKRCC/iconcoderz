@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import type { ChangeEvent, FormEvent  } from "react";
+import type { ChangeEvent, FormEvent } from "react";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -56,22 +56,34 @@ const initialFormData: FormData = {
 };
 
 const branches = [
-  "CSE", "CSBS", "CSD", "CSIT", "IT", "AI_DS", "AI_ML",
-  "ECE", "EEE", "MECH", "CIVIL", "CHEM", "BIO", "OTHER"
+  "CSE",
+  "CSBS",
+  "CSD",
+  "CSIT",
+  "IT",
+  "AI_DS",
+  "AI_ML",
+  "ECE",
+  "EEE",
+  "MECH",
+  "CIVIL",
+  "CHEM",
+  "BIO",
+  "OTHER",
 ];
 
 const years = [
   { label: "1st Year", value: "FIRST_YEAR" },
   { label: "2nd Year", value: "SECOND_YEAR" },
   { label: "3rd Year", value: "THIRD_YEAR" },
-  { label: "4th Year", value: "FOURTH_YEAR" }
+  { label: "4th Year", value: "FOURTH_YEAR" },
 ];
 
 const genders = [
   { label: "Male", value: "MALE" },
   { label: "Female", value: "FEMALE" },
   { label: "Other", value: "OTHER" },
-  { label: "Prefer not to say", value: "PREFER_NOT_TO_SAY" }
+  { label: "Prefer not to say", value: "PREFER_NOT_TO_SAY" },
 ];
 
 const steps = [
@@ -109,7 +121,10 @@ const RegistrationForm = () => {
     },
   });
 
-  const updateField = (field: keyof FormData, value: string | boolean | File | null) => {
+  const updateField = (
+    field: keyof FormData,
+    value: string | boolean | File | null,
+  ) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
@@ -121,7 +136,8 @@ const RegistrationForm = () => {
 
     switch (step) {
       case 0:
-        if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
+        if (!formData.fullName.trim())
+          newErrors.fullName = "Full name is required";
         if (!formData.registrationNumber.trim()) {
           newErrors.registrationNumber = "Registration number is required";
         } else if (!/^[a-zA-Z0-9]{10}$/.test(formData.registrationNumber)) {
@@ -139,7 +155,8 @@ const RegistrationForm = () => {
         }
         break;
       case 1:
-        if (!formData.yearOfStudy) newErrors.yearOfStudy = "Year of study is required";
+        if (!formData.yearOfStudy)
+          newErrors.yearOfStudy = "Year of study is required";
         if (!formData.branch) newErrors.branch = "Branch is required";
         if (!formData.gender) newErrors.gender = "Gender is required";
         break;
@@ -180,11 +197,17 @@ const RegistrationForm = () => {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) {
-        setErrors((prev) => ({ ...prev, paymentScreenshot: "File size must be less than 5MB" }));
+        setErrors((prev) => ({
+          ...prev,
+          paymentScreenshot: "File size must be less than 5MB",
+        }));
         return;
       }
       if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
-        setErrors((prev) => ({ ...prev, paymentScreenshot: "Only PNG/JPG files are allowed" }));
+        setErrors((prev) => ({
+          ...prev,
+          paymentScreenshot: "Only PNG/JPG files are allowed",
+        }));
         return;
       }
       updateField("paymentScreenshot", file);
@@ -220,11 +243,11 @@ const RegistrationForm = () => {
         {
           onUploadProgress: (progressEvent) => {
             const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / (progressEvent.total || 100)
+              (progressEvent.loaded * 100) / (progressEvent.total || 100),
             );
             setUploadProgress(percentCompleted);
           },
-        }
+        },
       );
 
       const registrationData: RegistrationData = {
@@ -243,15 +266,20 @@ const RegistrationForm = () => {
       };
 
       await registrationMutation.mutateAsync(registrationData);
-    } catch (error: Error | any) {
+    } catch (error: unknown) {
       console.error("Registration error:", error);
-      setApiError(error.message || "Registration failed. Please try again.");
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Registration failed. Please try again.";
+      setApiError(message);
       setIsSubmitting(false);
     }
   };
 
   const registrationOpenDate = new Date("2026-01-25T00:00:00+05:30");
-  const isRegistrationOpen = import.meta.env.DEV || new Date() >= registrationOpenDate;
+  const isRegistrationOpen =
+    import.meta.env.DEV || new Date() >= registrationOpenDate;
 
   if (!isRegistrationOpen) {
     return (
@@ -285,17 +313,22 @@ const RegistrationForm = () => {
             >
               <Sparkles className="text-white w-10 h-10" />
             </motion.div>
-            
+
             <h3 className="font-heading text-2xl sm:text-3xl font-bold mb-4">
               Opens Soon!
             </h3>
-            
+
             <p className="text-lg text-muted-foreground mb-6">
-              Registrations will be opened on <span className="text-primary font-semibold">25th January 2026</span>
+              Registrations will be opened on{" "}
+              <span className="text-primary font-semibold">
+                25th January 2026
+              </span>
             </p>
-            
+
             <div className="bg-muted rounded-xl p-4 inline-block">
-              <p className="text-sm text-muted-foreground">Stay tuned for updates!</p>
+              <p className="text-sm text-muted-foreground">
+                Stay tuned for updates!
+              </p>
             </div>
           </motion.div>
         </div>
@@ -324,17 +357,21 @@ const RegistrationForm = () => {
               Registration Successful! 🎉
             </h2>
             <p className="text-muted-foreground mb-6">
-              Thank you for registering for Iconcoderz-2k26. We'll verify your payment
-              and send a confirmation email within 24 hours.
+              Thank you for registering for Iconcoderz-2k26. We'll verify your
+              payment and send a confirmation email within 24 hours.
             </p>
             <div className="bg-muted rounded-xl p-4 mb-6">
-              <p className="text-sm text-muted-foreground">Your Registration ID</p>
+              <p className="text-sm text-muted-foreground">
+                Your Registration ID
+              </p>
               <p className="font-mono text-xl font-bold">
-                IC2K26-{Math.random().toString(36).substring(2, 8).toUpperCase()}
+                IC2K26-
+                {Math.random().toString(36).substring(2, 8).toUpperCase()}
               </p>
             </div>
             <p className="text-sm text-muted-foreground">
-              For any issues, contact <span className="text-primary font-medium">+91 85002 16667</span>
+              For any issues, contact{" "}
+              <span className="text-primary font-medium">+91 85002 16667</span>
             </p>
           </motion.div>
         </div>
@@ -375,7 +412,9 @@ const RegistrationForm = () => {
                 </div>
                 <span
                   className={`text-xs mt-2 hidden sm:block ${
-                    index <= currentStep ? "text-primary" : "text-muted-foreground"
+                    index <= currentStep
+                      ? "text-primary"
+                      : "text-muted-foreground"
                   }`}
                 >
                   {step.title}
@@ -383,7 +422,6 @@ const RegistrationForm = () => {
               </div>
             ))}
           </div>
-
         </div>
 
         {/* Form */}
@@ -392,11 +430,15 @@ const RegistrationForm = () => {
           {uploadProgress > 0 && uploadProgress < 100 && (
             <div className="mb-4 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm text-blue-400">Uploading payment screenshot...</span>
-                <span className="text-sm font-medium text-blue-400">{uploadProgress}%</span>
+                <span className="text-sm text-blue-400">
+                  Uploading payment screenshot...
+                </span>
+                <span className="text-sm font-medium text-blue-400">
+                  {uploadProgress}%
+                </span>
               </div>
               <div className="w-full bg-gray-700 rounded-full h-2">
-                <div 
+                <div
                   className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300"
                   style={{ width: `${uploadProgress}%` }}
                 />
@@ -408,7 +450,9 @@ const RegistrationForm = () => {
             <div className="mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg flex items-start gap-3">
               <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
               <div className="flex-1">
-                <p className="text-sm text-red-400 font-medium">Registration Failed</p>
+                <p className="text-sm text-red-400 font-medium">
+                  Registration Failed
+                </p>
                 <p className="text-sm text-red-300/80 mt-1">{apiError}</p>
               </div>
             </div>
@@ -432,13 +476,17 @@ const RegistrationForm = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Full Name */}
                     <div>
-                      <label className="block text-sm font-medium mb-2">Full Name *</label>
+                      <label className="block text-sm font-medium mb-2">
+                        Full Name *
+                      </label>
                       <input
                         type="text"
                         className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary transition-all"
                         placeholder="Enter your full name"
                         value={formData.fullName}
-                        onChange={(e) => updateField("fullName", e.target.value)}
+                        onChange={(e) =>
+                          updateField("fullName", e.target.value)
+                        }
                       />
                       {errors.fullName && (
                         <p className="text-sm text-destructive mt-1 flex items-center gap-1">
@@ -449,7 +497,9 @@ const RegistrationForm = () => {
 
                     {/* Registration Number */}
                     <div>
-                      <label className="block text-sm font-medium mb-2">Registration Number *</label>
+                      <label className="block text-sm font-medium mb-2">
+                        Registration Number *
+                      </label>
                       <input
                         type="text"
                         className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary transition-all"
@@ -458,13 +508,16 @@ const RegistrationForm = () => {
                         onChange={(e) =>
                           updateField(
                             "registrationNumber",
-                            e.target.value.replace(/[^a-zA-Z0-9]/g, "").slice(0, 10)
+                            e.target.value
+                              .replace(/[^a-zA-Z0-9]/g, "")
+                              .slice(0, 10),
                           )
                         }
                       />
                       {errors.registrationNumber && (
                         <p className="text-sm text-destructive mt-1 flex items-center gap-1">
-                          <AlertCircle className="w-4 h-4" /> {errors.registrationNumber}
+                          <AlertCircle className="w-4 h-4" />{" "}
+                          {errors.registrationNumber}
                         </p>
                       )}
                     </div>
@@ -473,7 +526,9 @@ const RegistrationForm = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Email */}
                     <div>
-                      <label className="block text-sm font-medium mb-2">Email Address *</label>
+                      <label className="block text-sm font-medium mb-2">
+                        Email Address *
+                      </label>
                       <input
                         type="email"
                         className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary transition-all"
@@ -490,14 +545,19 @@ const RegistrationForm = () => {
 
                     {/* Phone */}
                     <div>
-                      <label className="block text-sm font-medium mb-2">Phone Number *</label>
+                      <label className="block text-sm font-medium mb-2">
+                        Phone Number *
+                      </label>
                       <input
                         type="tel"
                         className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary transition-all"
                         placeholder="10-digit phone number"
                         value={formData.phone}
                         onChange={(e) =>
-                          updateField("phone", e.target.value.replace(/\D/g, "").slice(0, 10))
+                          updateField(
+                            "phone",
+                            e.target.value.replace(/\D/g, "").slice(0, 10),
+                          )
                         }
                       />
                       {errors.phone && (
@@ -509,7 +569,6 @@ const RegistrationForm = () => {
                   </div>
                 </motion.div>
               )}
-
 
               {/* Step 2: Academic Details */}
               {/* Step 2: Academic Details */}
@@ -529,11 +588,15 @@ const RegistrationForm = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {/* Year */}
                     <div>
-                      <label className="block text-sm font-medium mb-2">Year of Study *</label>
+                      <label className="block text-sm font-medium mb-2">
+                        Year of Study *
+                      </label>
                       <select
                         className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary transition-all"
                         value={formData.yearOfStudy}
-                        onChange={(e) => updateField("yearOfStudy", e.target.value)}
+                        onChange={(e) =>
+                          updateField("yearOfStudy", e.target.value)
+                        }
                       >
                         <option value="">Select year</option>
                         {years.map((year) => (
@@ -544,14 +607,17 @@ const RegistrationForm = () => {
                       </select>
                       {errors.yearOfStudy && (
                         <p className="text-sm text-destructive mt-1 flex items-center gap-1">
-                          <AlertCircle className="w-4 h-4" /> {errors.yearOfStudy}
+                          <AlertCircle className="w-4 h-4" />{" "}
+                          {errors.yearOfStudy}
                         </p>
                       )}
                     </div>
 
                     {/* Branch */}
                     <div>
-                      <label className="block text-sm font-medium mb-2">Branch *</label>
+                      <label className="block text-sm font-medium mb-2">
+                        Branch *
+                      </label>
                       <select
                         className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary transition-all"
                         value={formData.branch}
@@ -573,7 +639,9 @@ const RegistrationForm = () => {
 
                     {/* Gender */}
                     <div>
-                      <label className="block text-sm font-medium mb-2">Gender *</label>
+                      <label className="block text-sm font-medium mb-2">
+                        Gender *
+                      </label>
                       <select
                         className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary transition-all"
                         value={formData.gender}
@@ -595,7 +663,6 @@ const RegistrationForm = () => {
                   </div>
                 </motion.div>
               )}
-
 
               {/* Step 3: CP Handles */}
               {/* Step 3: CP Handles */}
@@ -621,26 +688,31 @@ const RegistrationForm = () => {
                       placeholder="CodeChef"
                       className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary transition-all"
                       value={formData.codechefHandle}
-                      onChange={(e) => updateField("codechefHandle", e.target.value)}
+                      onChange={(e) =>
+                        updateField("codechefHandle", e.target.value)
+                      }
                     />
                     <input
                       type="text"
                       placeholder="LeetCode"
                       className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary transition-all"
                       value={formData.leetcodeHandle}
-                      onChange={(e) => updateField("leetcodeHandle", e.target.value)}
+                      onChange={(e) =>
+                        updateField("leetcodeHandle", e.target.value)
+                      }
                     />
                     <input
                       type="text"
                       placeholder="Codeforces"
                       className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary transition-all"
                       value={formData.codeforcesHandle}
-                      onChange={(e) => updateField("codeforcesHandle", e.target.value)}
+                      onChange={(e) =>
+                        updateField("codeforcesHandle", e.target.value)
+                      }
                     />
                   </div>
                 </motion.div>
               )}
-
 
               {/* Step 4: Payment */}
               {/* Step 4: Payment */}
@@ -660,11 +732,13 @@ const RegistrationForm = () => {
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {/* Left: QR */}
                     <div className="bg-muted rounded-xl p-6 flex flex-col items-center justify-center">
-                      <p className="text-sm text-muted-foreground mb-4">Scan to Pay via UPI</p>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Scan to Pay via UPI
+                      </p>
                       <div className="w-48 h-48 bg-white rounded-xl flex items-center justify-center border-2 border-border overflow-hidden p-1">
-                        <img 
-                          src="/srkr-qr.webp" 
-                          alt="Payment QR Code" 
+                        <img
+                          src="/srkr-qr.webp"
+                          alt="Payment QR Code"
                           className="w-full h-full object-contain rounded-lg"
                         />
                       </div>
@@ -673,23 +747,33 @@ const RegistrationForm = () => {
                     {/* Right: Transaction ID + Screenshot */}
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium mb-2">Transaction ID *</label>
+                        <label className="block text-sm font-medium mb-2">
+                          Transaction ID *
+                        </label>
                         <input
                           type="text"
                           className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary transition-all"
                           value={formData.transactionId}
-                          onChange={(e) => updateField("transactionId", e.target.value.toUpperCase())}
+                          onChange={(e) =>
+                            updateField(
+                              "transactionId",
+                              e.target.value.toUpperCase(),
+                            )
+                          }
                           placeholder="8-12 alphanumeric"
                         />
                         {errors.transactionId && (
                           <p className="text-sm text-destructive mt-1 flex items-center gap-1">
-                            <AlertCircle className="w-4 h-4" /> {errors.transactionId}
+                            <AlertCircle className="w-4 h-4" />{" "}
+                            {errors.transactionId}
                           </p>
                         )}
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium mb-2">Payment Screenshot *</label>
+                        <label className="block text-sm font-medium mb-2">
+                          Payment Screenshot *
+                        </label>
                         <input
                           type="file"
                           ref={fileInputRef}
@@ -705,7 +789,9 @@ const RegistrationForm = () => {
                           {fileName ? (
                             <>
                               <Check className="text-green-500 w-6 h-6" />
-                              <span className="text-sm text-muted-foreground">{fileName}</span>
+                              <span className="text-sm text-muted-foreground">
+                                {fileName}
+                              </span>
                             </>
                           ) : (
                             <>
@@ -718,7 +804,8 @@ const RegistrationForm = () => {
                         </button>
                         {errors.paymentScreenshot && (
                           <p className="text-sm text-destructive mt-1 flex items-center gap-1">
-                            <AlertCircle className="w-4 h-4" /> {errors.paymentScreenshot}
+                            <AlertCircle className="w-4 h-4" />{" "}
+                            {errors.paymentScreenshot}
                           </p>
                         )}
                       </div>
@@ -726,7 +813,6 @@ const RegistrationForm = () => {
                   </div>
                 </motion.div>
               )}
-
 
               {/* Step 5: Confirm */}
               {currentStep === 4 && (
@@ -745,12 +831,18 @@ const RegistrationForm = () => {
                   <div className="bg-muted rounded-xl p-6 space-y-4">
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
-                        <p className="text-xs text-muted-foreground">Full Name</p>
+                        <p className="text-xs text-muted-foreground">
+                          Full Name
+                        </p>
                         <p className="font-medium">{formData.fullName}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Registration Number</p>
-                        <p className="font-medium">{formData.registrationNumber}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Registration Number
+                        </p>
+                        <p className="font-medium">
+                          {formData.registrationNumber}
+                        </p>
                       </div>
                       <div>
                         <p className="text-xs text-muted-foreground">Email</p>
@@ -761,14 +853,20 @@ const RegistrationForm = () => {
                         <p className="font-medium">{formData.phone}</p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Year & Branch</p>
+                        <p className="text-xs text-muted-foreground">
+                          Year & Branch
+                        </p>
                         <p className="font-medium">
                           {formData.yearOfStudy} - {formData.branch}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-muted-foreground">Transaction ID</p>
-                        <p className="font-medium font-mono">{formData.transactionId}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Transaction ID
+                        </p>
+                        <p className="font-medium font-mono">
+                          {formData.transactionId}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -777,12 +875,15 @@ const RegistrationForm = () => {
                     <input
                       type="checkbox"
                       checked={formData.confirmInfo}
-                      onChange={(e) => updateField("confirmInfo", e.target.checked)}
+                      onChange={(e) =>
+                        updateField("confirmInfo", e.target.checked)
+                      }
                       className=" w-5 h-5 rounded border-border text-primary focus:ring-primary"
                     />
                     <span className="text-sm text-muted-foreground">
-                      I confirm that all the information provided above is correct and unique.
-                      I understand that providing incorrect information may result in disqualification.
+                      I confirm that all the information provided above is
+                      correct and unique. I understand that providing incorrect
+                      information may result in disqualification.
                     </span>
                   </label>
                   {errors.confirmInfo && (
