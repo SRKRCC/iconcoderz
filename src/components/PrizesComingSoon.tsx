@@ -116,7 +116,7 @@ const PrizesSection = () => {
                     />
                     <span className="font-medium text-foreground">{prize}</span>
                     <span className="ml-auto text-sm text-muted-foreground">
-                      TBA
+                      {prizeIdx === 0 ? "₹3,000" : "₹2,000"}
                     </span>
                   </div>
                 ))}
