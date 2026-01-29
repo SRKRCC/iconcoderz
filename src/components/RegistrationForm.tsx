@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { registrationApi } from "../api/registration";
 import type { RegistrationData } from "../api/registration";
+import type { AxiosProgressEvent } from "axios";
 import {
   User,
   GraduationCap,
@@ -36,6 +37,7 @@ interface FormData {
   codeforcesHandle: string;
   transactionId: string;
   paymentScreenshot: File | null;
+  screenshotUrl?: string | null;
   confirmInfo: boolean;
 }
 
@@ -60,6 +62,7 @@ const initialFormData: FormData = {
   codeforcesHandle: "",
   transactionId: "",
   paymentScreenshot: null,
+  screenshotUrl: null,
   confirmInfo: false,
 };
 
@@ -114,6 +117,9 @@ const RegistrationForm = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [fileName, setFileName] = useState<string>("");
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadStatus, setUploadStatus] = useState<'idle'|'uploading'|'uploaded'|'failed'>('idle');
+  const [uploadError, setUploadError] = useState<string>("");
+  const uploadAbortRef = useRef<AbortController | null>(null);
   const [apiError, setApiError] = useState<string>("");
 
   const registrationMutation = useMutation({
@@ -183,7 +189,7 @@ const RegistrationForm = () => {
         } else if (!/^[a-zA-Z0-9]{8,12}$/.test(formData.transactionId)) {
           newErrors.transactionId = "Must be 8-12 alphanumeric characters";
         }
-        if (!formData.paymentScreenshot) {
+        if (!formData.screenshotUrl) {
           newErrors.paymentScreenshot = "Payment screenshot is required";
         }
         break;
@@ -208,25 +214,100 @@ const RegistrationForm = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 0));
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const compressToWebP = async (
+    file: File,
+    maxDim = 1024,
+    quality = 0.7,
+  ): Promise<Blob> => {
+    const imgBitmap = await createImageBitmap(file);
+    let { width, height } = imgBitmap;
+    const scale = Math.min(1, maxDim / Math.max(width, height));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.round(width * scale);
+    canvas.height = Math.round(height * scale);
+    const ctx = canvas.getContext("2d");
+    if (!ctx) throw new Error("Canvas not supported");
+    ctx.drawImage(imgBitmap, 0, 0, canvas.width, canvas.height);
+    return new Promise((resolve) =>
+      canvas.toBlob((blob) => resolve(blob as Blob), "image/webp", quality),
+    );
+  };
+
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setErrors((prev) => ({
-          ...prev,
-          paymentScreenshot: "File size must be less than 5MB",
-        }));
-        return;
-      }
-      if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
-        setErrors((prev) => ({
-          ...prev,
-          paymentScreenshot: "Only PNG/JPG files are allowed",
-        }));
-        return;
-      }
-      updateField("paymentScreenshot", file);
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      setErrors((prev) => ({
+        ...prev,
+        paymentScreenshot: "File size must be less than 5MB",
+      }));
+      return;
+    }
+    if (!["image/png", "image/jpeg", "image/jpg"].includes(file.type)) {
+      setErrors((prev) => ({
+        ...prev,
+        paymentScreenshot: "Only PNG/JPG files are allowed",
+      }));
+      return;
+    }
+
+    updateField("paymentScreenshot", file);
+    setFileName(file.name);
+    setUploadProgress(0);
+    setUploadError("");
+
+    try {
+      setUploadStatus("uploading");
+      // compress
+      const compressed = await compressToWebP(file, 1024, 0.7);
+
+      const signature = await registrationApi.getUploadSignature();
+
+      const cloudinaryFormData = new FormData();
+      cloudinaryFormData.append("file", compressed, `${file.name.replace(/\.[^.]+$/,"")}.webp`);
+      cloudinaryFormData.append("timestamp", signature.timestamp.toString());
+      cloudinaryFormData.append("signature", signature.signature);
+      cloudinaryFormData.append("api_key", signature.apiKey);
+      cloudinaryFormData.append("folder", "iconcoderz-payments");
+
+      // Abort control for cancel
+      const controller = new AbortController();
+      uploadAbortRef.current = controller;
+
+      const resp = await axios.post(
+        `https://api.cloudinary.com/v1_1/${signature.cloudName}/image/upload`,
+        cloudinaryFormData,
+        {
+          signal: controller.signal,
+          onUploadProgress: (ev: AxiosProgressEvent) => {
+            const loaded = ev?.loaded ?? 0;
+            const total = ev?.total ?? compressed.size;
+            const percent = Math.round((loaded / total) * 100);
+            setUploadProgress(percent);
+          },
+        },
+      );
+
+      const secureUrl = (resp as any)?.data?.secure_url;
+      if (!secureUrl) throw new Error("Upload failed");
+
+      setUploadStatus("uploaded");
+      setUploadProgress(100);
       setFileName(file.name);
+      // store url in form for registration
+      updateField("screenshotUrl", secureUrl);
+    } catch (err: unknown) {
+      if ((err as any)?.name === "CanceledError" || (err as any)?.message === "canceled") {
+        setUploadError("Upload cancelled");
+        setUploadStatus("idle");
+      } else {
+        setUploadError((err as Error).message || "Upload failed");
+        setUploadStatus("failed");
+      }
+      setUploadProgress(0);
+    } finally {
+      uploadAbortRef.current = null;
     }
   };
 
@@ -239,31 +320,9 @@ const RegistrationForm = () => {
     setUploadProgress(0);
 
     try {
-      const signature = await registrationApi.getUploadSignature();
-
-      if (!formData.paymentScreenshot) {
-        throw new Error("Payment screenshot is required");
+      if (!formData.screenshotUrl || uploadStatus !== "uploaded") {
+        throw new Error("Please upload payment screenshot before submitting");
       }
-
-      const cloudinaryFormData = new FormData();
-      cloudinaryFormData.append("file", formData.paymentScreenshot);
-      cloudinaryFormData.append("timestamp", signature.timestamp.toString());
-      cloudinaryFormData.append("signature", signature.signature);
-      cloudinaryFormData.append("api_key", signature.apiKey);
-      cloudinaryFormData.append("folder", "iconcoderz-payments");
-
-      const cloudinaryResponse = await axios.post(
-        `https://api.cloudinary.com/v1_1/${signature.cloudName}/image/upload`,
-        cloudinaryFormData,
-        {
-          onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round(
-              (progressEvent.loaded * 100) / (progressEvent.total || 100),
-            );
-            setUploadProgress(percentCompleted);
-          },
-        },
-      );
 
       const registrationData: RegistrationData = {
         fullName: formData.fullName,
@@ -285,7 +344,7 @@ const RegistrationForm = () => {
         leetcodeHandle: formData.leetcodeHandle || undefined,
         codeforcesHandle: formData.codeforcesHandle || undefined,
         transactionId: formData.transactionId,
-        screenshotUrl: cloudinaryResponse.data.secure_url,
+        screenshotUrl: formData.screenshotUrl as string,
       };
 
       await registrationMutation.mutateAsync(registrationData);
@@ -861,8 +920,8 @@ const RegistrationForm = () => {
                       </p>
                       <div className="w-48 h-48 bg-white rounded-xl flex items-center justify-center border-2 border-border overflow-hidden p-1">
                         <img
-                          src="/srkr-qr.webp"
-                          alt="Payment QR Code"
+                          src={formData.isCodingClubAffiliate ? "/srkr-qr-affiliate.webp" : "/srkr-qr.webp"}
+                          alt={formData.isCodingClubAffiliate ? "Affiliate Payment QR (₹50)" : "Payment QR Code (₹100)"}
                           className="w-full h-full object-contain rounded-lg"
                         />
                       </div>
@@ -905,27 +964,94 @@ const RegistrationForm = () => {
                           accept="image/png,image/jpeg,image/jpg"
                           onChange={handleFileChange}
                         />
-                        <button
-                          type="button"
-                          onClick={() => fileInputRef.current?.click()}
-                          className="w-full py-4 border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 hover:border-primary hover:bg-primary/5 transition-colors"
-                        >
-                          {fileName ? (
-                            <>
-                              <Check className="text-green-500 w-6 h-6" />
-                              <span className="text-sm text-muted-foreground">
-                                {fileName}
-                              </span>
-                            </>
-                          ) : (
-                            <>
-                              <Upload className="text-muted-foreground w-6 h-6" />
-                              <span className="text-sm text-muted-foreground">
-                                Click to upload screenshot (PNG/JPG, max 5MB)
-                              </span>
-                            </>
+                        <div className="flex gap-2 items-center">
+                          <button
+                            type="button"
+                            onClick={() => fileInputRef.current?.click()}
+                            className="flex-1 py-4 border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center gap-2 hover:border-primary hover:bg-primary/5 transition-colors"
+                          >
+                            {fileName ? (
+                              <>
+                                <Check className="text-green-500 w-6 h-6" />
+                                <span className="text-sm text-muted-foreground">
+                                  {fileName}
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <Upload className="text-muted-foreground w-6 h-6" />
+                                <span className="text-sm text-muted-foreground">
+                                  Click to upload screenshot (PNG/JPG, max 5MB)
+                                </span>
+                              </>
+                            )}
+                          </button>
+
+                          <div className="w-28">
+                            {uploadStatus === "uploading" && (
+                              <button
+                                type="button"
+                                className="w-full py-2 rounded-xl border border-border text-sm"
+                                onClick={() => {
+                                  uploadAbortRef.current?.abort();
+                                }}
+                              >
+                                Cancel
+                              </button>
+                            )}
+
+                            {uploadStatus === "failed" && (
+                              <button
+                                type="button"
+                                className="w-full py-2 rounded-xl border border-danger text-sm text-danger"
+                                onClick={() => {
+                                  if (formData.paymentScreenshot) {
+                                    const ev: any = { target: { files: [formData.paymentScreenshot] } };
+                                    handleFileChange(ev as ChangeEvent<HTMLInputElement>);
+                                  }
+                                }}
+                              >
+                                Retry
+                              </button>
+                            )}
+
+                            {uploadStatus === "uploaded" && (
+                              <button
+                                type="button"
+                                className="w-full py-2 rounded-xl border border-muted text-sm"
+                                onClick={() => {
+                                  // remove uploaded image
+                                  updateField("paymentScreenshot", null);
+                                  updateField("screenshotUrl", null);
+                                  setFileName("");
+                                  setUploadStatus("idle");
+                                  setUploadProgress(0);
+                                }}
+                              >
+                                Remove
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Small status / preview */}
+                        <div className="mt-2">
+                          {uploadStatus === "uploading" && (
+                            <p className="text-sm text-muted-foreground">Uploading... {uploadProgress}%</p>
                           )}
-                        </button>
+
+                          {uploadStatus === "uploaded" && formData.screenshotUrl && (
+                            <div className="mt-2 flex items-center gap-3">
+                              <img src={formData.screenshotUrl} alt="screenshot" className="w-20 h-20 rounded-md object-cover border" />
+                              <span className="text-sm text-success">Uploaded</span>
+                            </div>
+                          )}
+
+                          {uploadStatus === "failed" && (
+                            <p className="text-sm text-destructive">Upload failed. {uploadError}</p>
+                          )}
+                        </div>
+
                         {errors.paymentScreenshot && (
                           <p className="text-sm text-destructive mt-1 flex items-center gap-1">
                             <AlertCircle className="w-4 h-4" />{" "}
