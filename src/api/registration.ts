@@ -7,9 +7,12 @@ export interface User {
   registrationNumber: string;
   email: string;
   phone: string;
+  collegeName: string;
   yearOfStudy: 'FIRST_YEAR' | 'SECOND_YEAR' | 'THIRD_YEAR' | 'FOURTH_YEAR';
   branch: string;
   gender: 'MALE' | 'FEMALE' | 'OTHER' | 'PREFER_NOT_TO_SAY';
+  isCodingClubAffiliate: boolean;
+  affiliateId?: string;
   codechefHandle?: string;
   leetcodeHandle?: string;
   codeforcesHandle?: string;
@@ -29,9 +32,12 @@ export interface RegistrationData {
   registrationNumber: string;
   email: string;
   phone: string;
+  collegeName: string;
   yearOfStudy: string;
   branch: string;
   gender: string;
+  isCodingClubAffiliate: boolean;
+  affiliateId?: string;
   codechefHandle?: string;
   leetcodeHandle?: string;
   codeforcesHandle?: string;

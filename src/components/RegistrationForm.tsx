@@ -24,9 +24,13 @@ interface FormData {
   registrationNumber: string;
   email: string;
   phone: string;
+  collegeName: string;
+  otherCollegeName?: string;
   yearOfStudy: string;
   branch: string;
   gender: string;
+  isCodingClubAffiliate: boolean;
+  affiliateId: string;
   codechefHandle: string;
   leetcodeHandle: string;
   codeforcesHandle: string;
@@ -44,9 +48,13 @@ const initialFormData: FormData = {
   registrationNumber: "",
   email: "",
   phone: "",
+  collegeName: "SRKR Engineering College",
+  otherCollegeName: "",
   yearOfStudy: "",
   branch: "",
   gender: "",
+  isCodingClubAffiliate: false,
+  affiliateId: "",
   codechefHandle: "",
   leetcodeHandle: "",
   codeforcesHandle: "",
@@ -153,8 +161,15 @@ const RegistrationForm = () => {
         } else if (!/^\d{10}$/.test(formData.phone)) {
           newErrors.phone = "Must be 10 digits";
         }
+        if (formData.isCodingClubAffiliate && !formData.affiliateId.trim()) {
+          newErrors.affiliateId = "Affiliate ID is required";
+        }
         break;
       case 1:
+        if (!formData.collegeName) newErrors.collegeName = "College name is required";
+        if (formData.collegeName === "Other" && !formData.otherCollegeName?.trim()) {
+          newErrors.otherCollegeName = "Please specify your college name";
+        }
         if (!formData.yearOfStudy)
           newErrors.yearOfStudy = "Year of study is required";
         if (!formData.branch) newErrors.branch = "Branch is required";
@@ -255,9 +270,17 @@ const RegistrationForm = () => {
         registrationNumber: formData.registrationNumber,
         email: formData.email,
         phone: formData.phone,
+        collegeName:
+          formData.collegeName === "Other"
+            ? formData.otherCollegeName || "Other"
+            : formData.collegeName,
         yearOfStudy: formData.yearOfStudy,
         branch: formData.branch,
         gender: formData.gender,
+        isCodingClubAffiliate: formData.isCodingClubAffiliate,
+        affiliateId: formData.isCodingClubAffiliate
+          ? formData.affiliateId
+          : undefined,
         codechefHandle: formData.codechefHandle || undefined,
         leetcodeHandle: formData.leetcodeHandle || undefined,
         codeforcesHandle: formData.codeforcesHandle || undefined,
@@ -567,6 +590,53 @@ const RegistrationForm = () => {
                       )}
                     </div>
                   </div>
+
+                  <div className="space-y-4 pt-4 border-t border-border">
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="checkbox"
+                        id="isCodingClubAffiliate"
+                        className="w-5 h-5 rounded border-border bg-background text-primary focus:ring-primary"
+                        checked={formData.isCodingClubAffiliate}
+                        onChange={(e) =>
+                          updateField("isCodingClubAffiliate", e.target.checked)
+                        }
+                      />
+                      <label
+                        htmlFor="isCodingClubAffiliate"
+                        className="text-sm font-medium cursor-pointer"
+                      >
+                        Are you a Coding Club Affiliate?
+                      </label>
+                    </div>
+
+                    {formData.isCodingClubAffiliate && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        className="space-y-2"
+                      >
+                        <label className="block text-sm font-medium mb-2">
+                          Affiliate ID *
+                        </label>
+                        <input
+                          type="text"
+                          className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary transition-all"
+                          placeholder="Enter your Affiliate ID"
+                          value={formData.affiliateId}
+                          onChange={(e) =>
+                            updateField("affiliateId", e.target.value)
+                          }
+                        />
+                        {errors.affiliateId && (
+                          <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                            <AlertCircle className="w-4 h-4" />{" "}
+                            {errors.affiliateId}
+                          </p>
+                        )}
+                      </motion.div>
+                    )}
+                  </div>
                 </motion.div>
               )}
 
@@ -584,6 +654,60 @@ const RegistrationForm = () => {
                     <GraduationCap className="w-6 h-6 text-primary" />
                     Academic Details
                   </h3>
+
+                  <div className="space-y-4">
+                    {/* College Name */}
+                    <div>
+                      <label className="block text-sm font-medium mb-2">
+                        College Name *
+                      </label>
+                      <select
+                        className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary transition-all"
+                        value={formData.collegeName}
+                        onChange={(e) =>
+                          updateField("collegeName", e.target.value)
+                        }
+                      >
+                        <option value="SRKR Engineering College">
+                          SRKR Engineering College
+                        </option>
+                        <option value="Other">Other</option>
+                      </select>
+                      {errors.collegeName && (
+                        <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                          <AlertCircle className="w-4 h-4" />{" "}
+                          {errors.collegeName}
+                        </p>
+                      )}
+                    </div>
+
+                    {formData.collegeName === "Other" && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        className="space-y-2"
+                      >
+                        <label className="block text-sm font-medium mb-2">
+                          Please specify College Name *
+                        </label>
+                        <input
+                          type="text"
+                          className="w-full px-4 py-3 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary transition-all"
+                          placeholder="Enter your college name"
+                          value={formData.otherCollegeName}
+                          onChange={(e) =>
+                            updateField("otherCollegeName", e.target.value)
+                          }
+                        />
+                        {errors.otherCollegeName && (
+                          <p className="text-sm text-destructive mt-1 flex items-center gap-1">
+                            <AlertCircle className="w-4 h-4" />{" "}
+                            {errors.otherCollegeName}
+                          </p>
+                        )}
+                      </motion.div>
+                    )}
+                  </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {/* Year */}

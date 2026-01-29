@@ -114,10 +114,13 @@ const Users = () => {
       "Full Name",
       "Email",
       "Phone",
+      "College Name",
       "Registration Number",
       "Year",
       "Branch",
       "Gender",
+      "Coding Club Affiliate",
+      "Affiliate ID",
       "Codechef Handle",
       "Leetcode Handle",
       "Codeforces Handle",
@@ -140,10 +143,13 @@ const Users = () => {
       user.fullName || "",
       user.email || "",
       user.phone || "",
+      user.collegeName || "SRKR Engineering College",
       user.registrationNumber || "",
       yearMap[user.yearOfStudy] || user.yearOfStudy || "",
       user.branch || "",
       user.gender || "",
+      user.isCodingClubAffiliate ? "Yes" : "No",
+      user.affiliateId || "",
       user.codechefHandle || "",
       user.leetcodeHandle || "",
       user.codeforcesHandle || "",
@@ -371,6 +377,8 @@ const Users = () => {
                 <DetailRow label="Reg. Number" value={selectedUser.registrationNumber} />
                 <DetailRow label="Email" value={selectedUser.email} />
                 <DetailRow label="Phone" value={selectedUser.phone} />
+                <DetailRow label="College" value={selectedUser.collegeName} />
+                <DetailRow label="Coding Club" value={selectedUser.isCodingClubAffiliate ? `Yes (${selectedUser.affiliateId || 'No ID'})` : "No"} />
                 <DetailRow label="Gender" value={selectedUser.gender} />
               </div>
 
