@@ -34,12 +34,38 @@ export interface DashboardStats {
   }>;
 }
 
+export interface OutboxEntry {
+  id: string;
+  type: string;
+  status: 'PENDING' | 'PROCESSING' | 'DONE' | 'FAILED';
+  attempts: number;
+  payload: {
+    fullName: string;
+    email: string;
+    registrationCode: string;
+    userId: string;
+    phone?: string;
+    registrationNumber?: string;
+    branch?: string;
+    yearOfStudy?: string;
+  };
+  createdAt: string;
+  nextRetryAt?: string | null;
+  lastError?: string | null;
+  processedAt?: string | null;
+}
+
+export interface SendResult {
+  success: string[];
+  failed: { id: string; error: string }[];
+}
+
 export interface UsersFilters {
   paymentStatus?: string;
   branch?: string;
   yearOfStudy?: string;
   search?: string;
-}
+} 
 
 // Admin API
 export const adminApi = {
@@ -86,6 +112,17 @@ export const adminApi = {
     status: 'PENDING' | 'VERIFIED' | 'REJECTED'
   ): Promise<User> => {
     const response = await api.patch<User>(`/admin/users/${userId}/payment-status`, { status });
+    return response.data!;
+  },
+
+  getOutbox: async (status?: 'PENDING' | 'PROCESSING' | 'DONE' | 'FAILED'): Promise<OutboxEntry[]> => {
+    const url = status ? `/admin/outbox?status=${status}` : '/admin/outbox';
+    const response = await api.get<OutboxEntry[]>(url);
+    return response.data!;
+  },
+
+  sendOutbox: async (outboxIds: string[]): Promise<SendResult> => {
+    const response = await api.post<SendResult>('/admin/outbox/send', { outboxIds });
     return response.data!;
   },
 };
