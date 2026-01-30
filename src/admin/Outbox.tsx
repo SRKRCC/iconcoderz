@@ -21,6 +21,13 @@ const Outbox = () => {
     },
   });
 
+  const deleteMutation = useMutation<SendResult, Error, string[]>({
+    mutationFn: async (outboxIds: string[]) => await adminApi.deleteOutbox(outboxIds),
+    onSuccess: () => {
+      refetch();
+    },
+  });
+
 
   const toggleSelection = (id: string) => {
     const s = new Set(selectedIds);
@@ -54,9 +61,9 @@ const Outbox = () => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">📧 Outbox Management</h1>
+      <h1 className="text-3xl font-bold mb-6">Outbox Management</h1>
 
-      <div className="bg-white rounded-lg shadow p-4 mb-6">
+      <div className="bg-card rounded-lg shadow p-4 mb-6">
         <div className="flex items-center gap-4 justify-between">
           <div className="flex items-center gap-2">
             <label className="font-medium">Status:</label>
@@ -70,12 +77,13 @@ const Outbox = () => {
               <option value="PROCESSING">Processing</option>
               <option value="DONE">Done</option>
               <option value="FAILED">Failed</option>
+              <option value="DELETED">Deleted</option>
             </select>
             <button
               onClick={() => refetch()}
               className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
             >
-              🔄 Refresh
+              Refresh
             </button>
           </div>
 
@@ -84,23 +92,41 @@ const Outbox = () => {
               onClick={selectAll}
               className="px-4 py-2 bg-gray-200 text-gray-800 rounded"
             >
-              {selectedIds.size === entries.length ? "❌ Deselect All" : "✅ Select All"}
+              {selectedIds.size === entries.length ? "Deselect All" : "Select All"}
             </button>
             <button
               onClick={handleSend}
               disabled={sendMutation.status === 'pending' || selectedIds.size === 0}
               className="px-4 py-2 bg-green-500 text-white rounded disabled:bg-gray-400"
             >
-              {sendMutation.status === 'pending' ? "⏳ Sending..." : `📤 Send Selected (${selectedIds.size})`}
+              {sendMutation.status === 'pending' ? "Sending..." : `Send Selected (${selectedIds.size})`}
+            </button>
+            <button
+              onClick={async () => {
+                if (selectedIds.size === 0) { alert('Please select at least one entry'); return; }
+                if (!confirm(`Delete ${selectedIds.size} outbox entry(ies)? This is a soft-delete.`)) return;
+                try {
+                  await deleteMutation.mutateAsync(Array.from(selectedIds));
+                  alert('Deletion completed');
+                  setSelectedIds(new Set());
+                } catch (err) {
+                  console.error(err);
+                  alert('Failed to delete entries');
+                }
+              }}
+              disabled={deleteMutation.status === 'pending' || selectedIds.size === 0}
+              className="px-4 py-2 bg-red-500 text-white rounded disabled:bg-gray-400"
+            >
+              {deleteMutation.status === 'pending' ? 'Deleting...' : `Delete Selected (${selectedIds.size})`}
             </button>
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-hidden">
+      <div className="glass-card rounded-lg shadow overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-border text-foreground">
+            <thead className="bg-muted/5">
               <tr>
                 <th className="px-4 py-3 text-left">
                   <input
@@ -116,13 +142,14 @@ const Outbox = () => {
                 <th className="px-4 py-3 text-left">Attempts</th>
                 <th className="px-4 py-3 text-left">Created</th>
                 <th className="px-4 py-3 text-left">Error</th>
+                <th className="px-4 py-3 text-left">Actions</th>
               </tr>
             </thead>
 
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-card divide-y divide-border text-foreground">
               {isLoading ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-gray-500">
+                  <td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">
                     <div className="flex flex-col items-center gap-2">
                       <Loader2 className="w-6 h-6 animate-spin text-primary" />
                       Loading outbox...
@@ -131,13 +158,13 @@ const Outbox = () => {
                 </tr>
               ) : entries.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-gray-500">
-                    ✅ No entries found
+                  <td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">
+                    No entries found
                   </td>
                 </tr>
               ) : (
                 entries.map((entry: OutboxEntry) => (
-                  <tr key={entry.id} className={`${selectedIds.has(entry.id) ? 'bg-blue-50' : ''}`}>
+                  <tr key={entry.id} className={`${selectedIds.has(entry.id) ? 'bg-primary/10' : ''}`}>
                     <td className="px-4 py-3">
                       <input
                         type="checkbox"
@@ -146,15 +173,33 @@ const Outbox = () => {
                       />
                     </td>
                     <td className="px-4 py-3">
-                      <span className="px-2 py-1 text-xs font-medium rounded bg-yellow-100 text-yellow-800">{entry.status}</span>
+                      <span className="px-2 py-1 text-xs font-medium rounded bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100">{entry.status}</span>
                     </td>
                     <td className="px-4 py-3 text-sm">{entry.payload.fullName}</td>
                     <td className="px-4 py-3 text-sm">{entry.payload.email}</td>
                     <td className="px-4 py-3 text-sm font-mono">{entry.payload.registrationCode}</td>
                     <td className="px-4 py-3 text-sm">{entry.attempts}</td>
-                    <td className="px-4 py-3 text-sm text-gray-500">{new Date(entry.createdAt).toLocaleString()}</td>
+                    <td className="px-4 py-3 text-sm text-muted-foreground">{new Date(entry.createdAt).toLocaleString()}</td>
                     <td className="px-4 py-3 text-sm">
-                      {entry.lastError && (<span className="text-red-600 text-xs">⚠️ {entry.lastError.substring(0, 40)}...</span>)}
+                      {entry.lastError && (<span className="text-red-600 dark:text-red-300 text-xs">⚠️ {entry.lastError.substring(0, 40)}...</span>)}
+                    </td>
+                    <td className="px-4 py-3 text-sm">
+                      <button
+                        onClick={async () => {
+                          if (!confirm('Delete this outbox entry? This will soft-delete the entry.')) return;
+                          try {
+                            await deleteMutation.mutateAsync([entry.id]);
+                            alert('Deleted');
+                          } catch (err) {
+                            console.error(err);
+                            alert('Failed to delete entry');
+                          }
+                        }}
+                        className="px-3 py-1 bg-red-500 text-white rounded text-xs"
+                        title="Delete"
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))

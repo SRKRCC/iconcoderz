@@ -931,7 +931,7 @@ const RegistrationForm = () => {
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium mb-2">
-                          Transaction ID *
+                          12 Digits Transaction/UTR ID *
                         </label>
                         <input
                           type="text"

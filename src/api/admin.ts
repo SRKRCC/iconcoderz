@@ -125,4 +125,14 @@ export const adminApi = {
     const response = await api.post<SendResult>('/admin/outbox/send', { outboxIds });
     return response.data!;
   },
+
+  deleteOutbox: async (outboxIds: string[]): Promise<SendResult> => {
+    const response = await api.post<SendResult>('/admin/outbox/delete', { outboxIds });
+    return response.data!;
+  },
+
+  deleteUsers: async (userIds: string[]): Promise<SendResult> => {
+    const response = await api.post<SendResult>('/admin/users/delete', { userIds });
+    return response.data!;
+  },
 };

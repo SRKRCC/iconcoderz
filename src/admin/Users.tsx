@@ -443,7 +443,29 @@ const Users = () => {
                 </button>
               </div>
             )}
-          </div>
+            <div className="mt-4 pt-4 border-t border-border">
+              <button
+                onClick={async () => {
+                  if (!confirm('Delete this user? This will soft-delete the account and can be restored from the DB.')) return;
+                  try {
+                    const res = await adminApi.deleteUsers([selectedUser.id]);
+                    if (res?.success?.length) {
+                      alert('User deleted');
+                      queryClient.invalidateQueries({ queryKey: ['admin', 'users'] });
+                      setSelectedUser(null);
+                    } else {
+                      alert('Delete failed');
+                    }
+                  } catch (err) {
+                    console.error(err);
+                    alert('Failed to delete user');
+                  }
+                }}
+                className="w-full px-4 py-3 bg-red-600 text-white rounded-xl font-medium hover:bg-red-700 transition-colors"
+              >
+                Delete User
+              </button>
+            </div>          </div>
         )}
       </div>
     </div>
