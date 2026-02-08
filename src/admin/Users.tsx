@@ -63,6 +63,12 @@ const paymentStatusOptions: { label: string; value: string }[] = [
   { label: "Rejected", value: "REJECTED" },
 ];
 
+const affiliateOptions: { label: string; value: string }[] = [
+  { label: "All Members", value: "" },
+  { label: "Affiliates Only", value: "true" },
+  { label: "Non-Affiliates", value: "false" },
+];
+
 const statusStyles: Record<PaymentStatus, string> = {
   PENDING: "bg-yellow-100 text-yellow-700",
   VERIFIED: "bg-green-100 text-green-700",
@@ -86,9 +92,12 @@ const Users = () => {
   const [filterStatus, setFilterStatus] = useState<string>("");
   const [filterYear, setFilterYear] = useState<string>("");
   const [filterBranch, setFilterBranch] = useState<string>("");
+  const [filterCollege, setFilterCollege] = useState<string>("");
+  const [filterAffiliate, setFilterAffiliate] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState<string>("");
   
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
+  const [debouncedCollege, setDebouncedCollege] = useState<string>("");
   
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -97,14 +106,24 @@ const Users = () => {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  const hasActiveFilters = filterStatus || filterYear || filterBranch || debouncedSearch;
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedCollege(filterCollege);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [filterCollege]);
+
+  const hasActiveFilters = filterStatus || filterYear || filterBranch || debouncedCollege || filterAffiliate || debouncedSearch;
 
   const clearFilters = () => {
     setFilterStatus("");
     setFilterYear("");
     setFilterBranch("");
+    setFilterCollege("");
+    setFilterAffiliate("");
     setSearchQuery("");
     setDebouncedSearch("");
+    setDebouncedCollege("");
   };
 
   // Export to CSV
@@ -173,12 +192,14 @@ const Users = () => {
   };
 
   const { data: users = [], isLoading, error } = useQuery({
-    queryKey: ["admin", "users", filterStatus, filterYear, filterBranch, debouncedSearch],
+    queryKey: ["admin", "users", filterStatus, filterYear, filterBranch, debouncedCollege, filterAffiliate, debouncedSearch],
     queryFn: () =>
       adminApi.getUsers({
         paymentStatus: filterStatus || undefined,
         yearOfStudy: filterYear || undefined,
         branch: filterBranch || undefined,
+        collegeName: debouncedCollege || undefined,
+        isCodingClubAffiliate: filterAffiliate || undefined,
         search: debouncedSearch || undefined,
       }),
   });
@@ -279,6 +300,24 @@ const Users = () => {
                 className={selectStyles}
               >
                 {paymentStatusOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+
+              <input
+                type="text"
+                placeholder="College name..."
+                value={filterCollege}
+                onChange={(e) => setFilterCollege(e.target.value)}
+                className={selectStyles}
+              />
+
+              <select
+                value={filterAffiliate}
+                onChange={(e) => setFilterAffiliate(e.target.value)}
+                className={selectStyles}
+              >
+                {affiliateOptions.map((opt) => (
                   <option key={opt.value} value={opt.value}>{opt.label}</option>
                 ))}
               </select>

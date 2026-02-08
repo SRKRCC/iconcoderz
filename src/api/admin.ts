@@ -64,6 +64,8 @@ export interface UsersFilters {
   paymentStatus?: string;
   branch?: string;
   yearOfStudy?: string;
+  collegeName?: string;
+  isCodingClubAffiliate?: string;
   search?: string;
 } 
 
@@ -93,6 +95,8 @@ export const adminApi = {
     if (filters?.paymentStatus) params.append('paymentStatus', filters.paymentStatus);
     if (filters?.branch) params.append('branch', filters.branch);
     if (filters?.yearOfStudy) params.append('yearOfStudy', filters.yearOfStudy);
+    if (filters?.collegeName) params.append('collegeName', filters.collegeName);
+    if (filters?.isCodingClubAffiliate) params.append('isCodingClubAffiliate', filters.isCodingClubAffiliate);
     if (filters?.search) params.append('search', filters.search);
 
     const queryString = params.toString();
