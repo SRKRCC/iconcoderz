@@ -84,8 +84,6 @@ const branches = [
 ];
 
 const years = [
-  { label: "1st Year", value: "FIRST_YEAR" },
-  { label: "2nd Year", value: "SECOND_YEAR" },
   { label: "3rd Year", value: "THIRD_YEAR" },
   { label: "4th Year", value: "FOURTH_YEAR" },
 ];
@@ -476,6 +474,12 @@ const RegistrationForm = () => {
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
             Join <span className="gradient-text">Iconcoderz-2k26</span>
           </h2>
+          <div className="mt-6 px-4 py-3 bg-yellow-500/10 border border-yellow-500/20 rounded-xl inline-flex items-center gap-3 max-w-2xl mx-auto">
+             <AlertCircle className="w-5 h-5 text-yellow-500 flex-shrink-0" />
+             <p className="text-sm text-yellow-200/80 text-left">
+               Due to an overwhelming number of applications, registrations are currently closed for 1st and 2nd year students. We appreciate your enthusiasm!
+             </p>
+          </div>
         </motion.div>
 
         {/* Progress Bar */}
