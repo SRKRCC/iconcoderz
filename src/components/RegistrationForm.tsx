@@ -358,8 +358,63 @@ const RegistrationForm = () => {
   };
 
   const registrationOpenDate = new Date("2026-01-25T00:00:00+05:30");
+  const registrationCloseDate = new Date("2026-02-10T21:00:00+05:30");
+  const now = new Date();
+  const isRegistrationClosed = !import.meta.env.DEV && now > registrationCloseDate;
   const isRegistrationOpen =
-    import.meta.env.DEV || new Date() >= registrationOpenDate;
+    import.meta.env.DEV || (now >= registrationOpenDate && now <= registrationCloseDate);
+
+  if (isRegistrationClosed) {
+    return (
+      <section id="register" className="section-padding" ref={ref}>
+        <div className="registration-container-custom max-w-3xl">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            className="text-center"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-4">
+              <AlertCircle className="w-4 h-4" />
+              <span className="text-sm font-medium">Registration</span>
+            </div>
+            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold mb-4">
+              Join <span className="gradient-text">Iconcoderz-2k26</span>
+            </h2>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ delay: 0.2 }}
+            className="glass-card rounded-3xl p-8 sm:p-12 text-center mt-8"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={isInView ? { scale: 1 } : {}}
+              transition={{ delay: 0.4, type: "spring" }}
+              className="w-20 h-20 rounded-full bg-red-500/80 flex items-center justify-center mx-auto mb-6"
+            >
+              <AlertCircle className="text-white w-10 h-10" />
+            </motion.div>
+
+            <h3 className="font-heading text-2xl sm:text-3xl font-bold mb-4">
+              Registrations Closed
+            </h3>
+
+            <p className="text-lg text-muted-foreground mb-6">
+              Registrations closed on <span className="text-destructive font-semibold">10th February 2026, 9:00 PM (IST)</span>.
+            </p>
+
+            <div className="bg-muted rounded-xl p-4 inline-block">
+              <p className="text-sm text-muted-foreground">
+                For any queries, contact <span className="text-primary font-medium">+91 85002 16667</span>
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+    );
+  }
 
   if (!isRegistrationOpen) {
     return (
