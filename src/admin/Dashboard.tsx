@@ -27,6 +27,8 @@ const AdminDashboard = () => {
           <p className="text-sm text-muted-foreground">{(error as Error).message}</p>
         </div>
       </div>
+      
+
     );
   }
 
@@ -71,6 +73,33 @@ const AdminDashboard = () => {
           <span className="text-2xl font-bold mt-2">{rejectedPayments}</span>
         </div>
       </div>
+
+      <div className="mb-8">
+          <h2 className="text-xl font-semibold mb-4">College Distribution</h2>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {Object.entries({
+              "Shri Vishnu Engineering College for Women": 145,
+              "Vishnu Institute of Technology": 1,
+              "Swarnandhra College of Engineering and Technology": 2,
+              "SRKR Engineering College": 102,
+              "Sasi Institute of Technology": 1,
+              "Adithya Engineering College": 4,
+            }).map(([college, count]) => (
+              <div
+                key={college}
+                className="bg-pink-100 rounded-lg p-4 flex flex-col items-center shadow hover:scale-105 transition"
+              >
+                <span className="text-sm text-pink-600 text-center font-medium">
+                  {college}
+                </span>
+                <span className="text-2xl font-bold text-pink-700 mt-2">
+                  {count}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
 
       {/* Branch Distribution */}
       <div className="mb-8">
