@@ -75,7 +75,7 @@ const AdminDashboard = () => {
       {/* Branch Distribution */}
       <div className="mb-8">
         <h2 className="text-xl font-semibold mb-4">Branch Distribution</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
           {Object.keys(branchCounts).map((branch) => (
             <div
               key={branch}
@@ -83,6 +83,27 @@ const AdminDashboard = () => {
             >
               <span className="text-sm text-pink-500">{branch}</span>
               <span className="text-xl font-bold text-pink-500">{branchCounts[branch]}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Year Distribution */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold mb-4">Year Distribution</h2>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          {Object.keys(stats.yearDistribution)
+            .sort((a, b) => {
+              const order = ["FIRST_YEAR", "SECOND_YEAR", "THIRD_YEAR", "FOURTH_YEAR"];
+              return order.indexOf(a) - order.indexOf(b);
+            })
+            .map((year) => (
+            <div
+              key={year}
+              className="bg-purple-100 rounded-lg p-4 flex flex-col items-center shadow"
+            >
+              <span className="text-sm text-purple-500">{year.replace(/_/g, " ")}</span>
+              <span className="text-xl font-bold text-purple-500">{stats.yearDistribution[year]}</span>
             </div>
           ))}
         </div>
